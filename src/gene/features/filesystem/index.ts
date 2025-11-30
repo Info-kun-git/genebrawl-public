@@ -48,15 +48,7 @@ export class Filesystem {
     }
 
     static doesFileExist(path: string) {
-        try {
-            const file = new File(path, 'r');
-
-            file.close();
-
-            return true;
-        } catch (e) {
-            return false;
-        }
+        return Libc.access(path) !== -1;
     }
 
     static readFile(path: string) {
