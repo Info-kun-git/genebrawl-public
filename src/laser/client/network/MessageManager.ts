@@ -12,7 +12,6 @@ import {BattleEndMessage} from "../../../logic/message/battle/BattleEndMessage";
 import {PlayAgainMessage} from "../../../logic/message/battle/PlayAgainMessage";
 import {HomeMode} from "../../../logic/home/HomeMode";
 import {GameStateManager} from "../state/GameStateManager";
-import {APIManager} from "../../../gene/networking/APIManager";
 import {LatencyData} from "../../../logic/latency/LatencyData";
 import {LatencyManager} from "./LatencyManager";
 import {UdpConnectionInfoMessage} from "../../../logic/message/udp/UdpConnectionInfoMessage";
@@ -171,24 +170,6 @@ Account tier: ${message.getAccountTier()}
 
         }
 
-        if (Configuration.useBfp) {
-            Debug.changeDebugAvailable(1);
-        }
-        else {
-            Debug.changeDebugAvailable(0);
-
-            if (!LogicVersion.isFree()) {
-                /// #if VIP
-                APIManager.doLogin(
-                    HashTagCodeGenerator.toCode(this.accountId)
-                );
-                /// #endif
-            }
-            else {
-                Debug.changeDebugAvailable(1);
-            }
-        }
-
         let languageCode = StringTable.getCurrentLanguageCode();
 
         if (!languageCode)
@@ -207,10 +188,8 @@ Account tier: ${message.getAccountTier()}
     }
 
     private static onOwnHomeDataMessageReceived(message: OwnHomeDataMessage) {
-        if (LogicVersion.isVip() || LogicVersion.isDeveloperBuild()) {
-            BattleMode.xrayTargetGlobalId = -1;
-            BattleMode.xrayTargetPlayerIndex = -1;
-        }
+        BattleMode.xrayTargetGlobalId = -1;
+        BattleMode.xrayTargetPlayerIndex = -1;
 
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
@@ -326,12 +305,10 @@ Account tier: ${message.getAccountTier()}
     }
 
     private static onBattleEndMessageReceived(message: BattleEndMessage) {
-        if (LogicVersion.isVip() || LogicVersion.isDeveloperBuild()) {
-            BattleMode.xrayTargetGlobalId = -1;
-            BattleMode.xrayTargetPlayerIndex = -1;
+        BattleMode.xrayTargetGlobalId = -1;
+        BattleMode.xrayTargetPlayerIndex = -1;
 
-            Debug.getDebugMenu()?.removeCategory(EDebugCategory.XRAY);
-        }
+        Debug.getDebugMenu()?.removeCategory(EDebugCategory.XRAY);
 
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
@@ -418,8 +395,7 @@ Account tier: ${message.getAccountTier()}
         }
 
 
-        if (LogicVersion.isVip() || LogicVersion.isDeveloperBuild()) {
-            /// #if VIP
+        if (LogicVersion.isDeveloperBuild()) {
             Debug.getDebugMenu().createDebugMenuButton("Disable X-Ray", -1, -1, 0, EDebugCategory.XRAY);
 
             for (const player of playersArray) {
@@ -434,7 +410,6 @@ Account tier: ${message.getAccountTier()}
 
                 Debug.getDebugMenu().needToUpdateLayout();
             }
-            /// #endif
         }
 
         // console.log(info)

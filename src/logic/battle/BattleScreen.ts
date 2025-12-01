@@ -211,7 +211,7 @@ export class BattleScreen {
             }, 'bool', ['pointer']));
         }
 
-        /// #if VIP
+        // Kit Hack was fixed
         /*Interceptor.replace(LogicCharacterClientOwn_isAttached, new NativeCallback(function (charClientOwn) {
             return Configuration.kitMoveHack ? 0 : LogicCharacterClientOwn_isAttached(charClientOwn);
         }, 'bool', ['pointer']));
@@ -222,9 +222,6 @@ export class BattleScreen {
             return BattleScreen_shouldShowMoveStick(battleScreen);
         }, 'bool', ['pointer']));*/
 
-        //KIT HACK WAS FIXED
-
-        /// #endif
         Interceptor.replace(BattleScreen_isAFK, new NativeCallback(function (battleScreen) {
             const isAfk = BattleScreen_isAFK(battleScreen);
 
@@ -246,7 +243,6 @@ export class BattleScreen {
             return isAfk;
         }, 'bool', ['pointer']));
 
-        /// #if VIP
         Interceptor.replace(BattleScreen_updateSkill, new NativeCallback(function (battleScreen, gameObject, a3, a4, a5) {
             BattleScreen_updateSkill(battleScreen, gameObject, a3, a4, a5);
 
@@ -267,13 +263,10 @@ export class BattleScreen {
 
             // I think you can implement whatever you need here by yourself :)
         }, 'void', ['pointer', 'pointer', 'float', 'pointer', 'bool']));
-        /// #endif
     }
 
     static tickXray(battleScreen: NativePointer) {
-        /// #if VIP
-        // this too.
-        /// #endif
+        // you have to implement this by yourself.
     }
 
     static getIntroCameraTimeLeft() {

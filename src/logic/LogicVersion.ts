@@ -10,25 +10,19 @@ const LogicVersion_isDeveloperBuild = Libg.offset(0x0, 0x39275C); // "LATENCY TE
 const version = LogicDefines.isPlatformAndroid() ? "62.250" : "62.258";
 const scriptVersion = 87;
 
-type ScriptEnvironment = "dev" | "vip" | "free";
+type ScriptEnvironment = "dev" | "prod";
 
 export class LogicVersion {
     static readonly scriptEnvironment: ScriptEnvironment = process.env.SCRIPT_ENV as ScriptEnvironment;
     static iosVersion: number = 0;
-    static isNDA: boolean = false;
 
-    static isFree(): boolean {
-        return this.scriptEnvironment == "free";
+    static isProd(): boolean {
+        return this.scriptEnvironment == "prod";
     }
 
     static isDeveloperBuild(): boolean {
         return this.scriptEnvironment == 'dev';
     }
-
-    static isVip(): boolean {
-        return this.scriptEnvironment == 'vip';
-    }
-
     static getScriptVersion(): number {
         return scriptVersion;
     }

@@ -44,11 +44,6 @@ export class BattleMode {
     }
 
     static setXrayTarget(playerName: string) {
-        if (!LogicVersion.isVip() && !LogicVersion.isDeveloperBuild()) {
-            return;
-        }
-
-        /// #if VIP
         let playerIdx = Number(playerName.split(".")[0]);
 
         console.log("BattleMode.setXrayTarget:", "xray target: ", playerName);
@@ -66,7 +61,6 @@ export class BattleMode {
         GUI.showFloaterText(
             LocalizationManager.getString("XRAY_TARGET_SELECTED").replace("%TARGET", LogicPlayer.getName(playerPtr))
         );
-        /// #endif
     }
 
     static getIntroTicks(): number {

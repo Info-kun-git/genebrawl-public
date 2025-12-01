@@ -29,9 +29,6 @@ export class ChatCommandHandler {
                 case "NO_COMMAND_DEFINED":
                     executionResult = LocalizationManager.getString("NO_COMMAND_DEFINED");
                     break;
-                case "NO_PERMISSIONS":
-                    executionResult = LocalizationManager.getString("VIP_ONLY");
-                    break;
                 case "":
                     executionResult = "OK!";
                     break;

@@ -285,11 +285,6 @@ export class HomeScreen {
                         Configuration.save();
                     }
                 }
-
-                // Remove LogicVersion::isDeveloperBuild check if you need to test this.
-                if (!Debug.available && !LogicVersion.isDeveloperBuild()) {
-                    HomeScreen.speechCharacter = Debug.setupSpeechCharacter();
-                }
             }
         });
     }

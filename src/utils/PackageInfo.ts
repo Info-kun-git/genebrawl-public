@@ -5,19 +5,13 @@ import ObjC from "frida-objc-bridge";
 const VALID_PACKAGE_NAMES_FOR_ENVIRONMENT: { [environment: string]: string[]; } = {
     "dev": [
         "gene.brawl.dev",
-        "gene.brawl.vip",
         "gene.brawl.release",
         "com.supercell.brawlstars",
         "com.supercell.brawlstarts",
         "bsd.suitcase.release"
     ],
 
-    "vip": [
-        "gene.brawl.dev",
-        "gene.brawl.vip"
-    ],
-
-    "free": [
+    "prod": [
         "gene.brawl.release"
     ]
 };

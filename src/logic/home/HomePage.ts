@@ -39,10 +39,6 @@ export class HomePage {
             if (Configuration.useBfp)
                 a4 = ptr(3);
 
-            if (!LogicVersion.isDeveloperBuild() && !Debug.available && Debug.isChecked) {
-                GUI.showFloaterText(LocalizationManager.getString("NEED_TO_ACTIVATE").replace("$KEY", Configuration.validKey));
-                return;
-            }
             HomePage_startGame(a1, a2, a3, a4, a5, a6, a7, a8, a9);
         }, 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']));
     }

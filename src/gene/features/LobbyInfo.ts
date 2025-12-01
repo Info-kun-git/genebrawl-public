@@ -47,10 +47,7 @@ export class LobbyInfo extends MovieClip {
         text += `Ping: ${LatencyManager.getBestLatencyDataString()}\n`;
         text += `Platform: ${LogicDefines.toString()}\n`;
         text += "Telegram: t.me/gene_land";
-
-        if (LogicVersion.isVip())
-            text += `\nKey: ${Configuration.validKey}\n`;
-
+        
         return text;
     }
 

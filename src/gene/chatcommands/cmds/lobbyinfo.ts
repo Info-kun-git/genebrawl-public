@@ -14,7 +14,7 @@ export class LobbyInfoCommand extends MainCommand {
     }
 
     getPermission() {
-        return Permissions.NDA;
+        return Permissions.DEVELOPER;
     }
 
     getCommandInformation() {

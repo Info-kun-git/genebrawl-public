@@ -46,7 +46,7 @@ export class ClientInputManager {
                     }
                 }
 
-                if (inputType === ClientInputType.Movement && Configuration.antiknockback && LogicVersion.isNDA) {
+                if (inputType === ClientInputType.Movement && Configuration.antiknockback) {
                     ClientInputManager.addInput(
                         new ClientInput(3)
                     );

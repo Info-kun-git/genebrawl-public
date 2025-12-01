@@ -14,7 +14,6 @@ module.exports = function (env, argv) {
     // define preprocessor variables
     const opts = {
         DEBUG: scriptEnvironment === "dev",
-        VIP: scriptEnvironment === "vip" || scriptEnvironment === "dev",
         version: 3,
         "ifdef-verbose": true,
         "ifdef-triple-slash": true,

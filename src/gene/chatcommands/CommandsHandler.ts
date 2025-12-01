@@ -40,16 +40,8 @@ export class CommandsHandler {
         }
 
         switch (command.getPermission()) {
-            case Permissions.VIP:
-                if (!LogicVersion.isVip() && !LogicVersion.isDeveloperBuild())
-                    return "NO_PERMISSIONS";
-                break;
             case Permissions.DEVELOPER:
                 if (!LogicVersion.isDeveloperBuild())
-                    return "NO_COMMAND_DEFINED";
-                break;
-            case Permissions.NDA:
-                if (!LogicVersion.isDeveloperBuild() && !LogicVersion.isNDA)
                     return "NO_COMMAND_DEFINED";
                 break;
         }

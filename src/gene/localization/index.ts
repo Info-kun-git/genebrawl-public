@@ -436,8 +436,6 @@ export class LocalizationManager {
             NOT_IMPLEMENTED_YET_IOS: "Эта функция ещё не реализована на iOS!",
             NOT_IMPLEMENTED_YET_ANDROID: "Эта функция ещё не реализована на Android!",
 
-            VIP_ONLY: "Эта функция доступна только пользователям Gene Brawl VIP! Купить VIP можно тут: https://t.me/gene_land",
-
             BFP_ACCOUNT_REMOVED: "Последний аккаунт ($TAG) был удален!",
             BFP_ALL_ACCOUNTS_REMOVED: "Все аккаунты удалены!",
             BFP_NO_ACCOUNTS: "Нет сохраненных аккаунтов",
@@ -468,7 +466,7 @@ export class LocalizationManager {
             STATUS_CHANGED: "Статус в команде изменен на %STATUS",
 
             TAG_COPIED: "Тег скопирован!",
-            IOS_TOO_OLD: "<cfff700>Вы используете устаревшую версию Gene Brawl VIP для iOS. Пожалуйста, установите новый .ipa в ветке \"Обновления\".</c>",
+            IOS_TOO_OLD: "<cfff700>Вы используете устаревшую версию Gene Brawl для iOS. Пожалуйста, установите новый .ipa в ветке \"Обновления\".</c>",
             ANTI_OUT_OF_SYNC: "<cfff700>У вас активировано \"Обход потери соединения\", отключите если вам он не нужен.</c>",
 
             XRAY_TARGET_SELECTED: "Цель для X-Ray %TARGET выбрана!",
@@ -860,8 +858,6 @@ export class LocalizationManager {
             NOT_IMPLEMENTED_YET_IOS: "This feature is not implemented yet for iOS! We will implement it later.",
             NOT_IMPLEMENTED_YET_ANDROID: "This feature is not implemented yet for Android! We will implement it later.",
 
-            VIP_ONLY: "This feature is available only for Gene Brawl VIP users! You can buy VIP here: t.me/gene_land",
-
             GENE_PROXY: "Gene proxy enabled! Restart game to apply changes.",
             PROXY_DISABLED: "Proxy is disabled! Restart game to apply changes.",
 
@@ -921,7 +917,7 @@ export class LocalizationManager {
             DARK_THEME_INTERRUPTED: "Dark theme changing was interrupted.",
 
             TAG_COPIED: "Tag was copied!",
-            IOS_TOO_OLD: "<cfff700>You are using outdated Gene Brawl VIP version for iOS. Please, update using new .ipa in \"Обновления\" topic.</c>",
+            IOS_TOO_OLD: "<cfff700>You are using outdated Gene Brawl version for iOS. Please, update using new .ipa in \"Обновления\" topic.</c>",
             ANTI_OUT_OF_SYNC: "<cfff700>You have \"Bypass Out Of Sync\" activated, disable it if you don't need it anymore.</c>",
 
             XRAY_TARGET_SELECTED: "Xray target %TARGET selected!",

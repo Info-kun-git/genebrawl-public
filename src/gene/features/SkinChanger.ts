@@ -13,32 +13,24 @@ export class SkinChanger {
     public static load(message: StartLoadingMessage) {
         if (!SkinChanger.available)
             return;
-
-        /// #if VIP
-        /// #endif
     }
 
     public static patchSelectedSkins(logicDailyData: NativePointer) {
-        /// #if VIP
-        /// #endif
+
     }
 
     public static patchTeamEntry(teamMemberEntryArray: NativePointer) {
         if (!SkinChanger.available)
             return;
 
-        /// #if VIP
-        /// #endif
     }
 
     public static revertPatches() {
-        /// #if VIP
-        /// #endif
+
     }
 
     public static patch() {
-        /// #if VIP
-        /// #endif
+
     }
 }
 

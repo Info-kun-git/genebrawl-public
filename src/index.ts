@@ -166,10 +166,6 @@ function setupAllianceHooks() {
     AllianceMemberEntry.patch();
 }
 
-function setupDebugMode() {
-    Debug.init();
-}
-
 function setupGame() {
     FramerateManager.patch();
     LogicVersion.patch();
@@ -244,9 +240,6 @@ function initErrorHandler() {
 rpc.exports.init = function (stage, parameters) {
     try {
         /// #if DEBUG
-        if (LogicVersion.isDeveloperBuild())
-            LogicVersion.isNDA = true;
-
         initErrorHandler();
         /// #endif
 
@@ -269,7 +262,6 @@ rpc.exports.init = function (stage, parameters) {
         setupHomeHooks();
         setupBattleHooks();
         setupTeamHooks();
-        setupDebugMode();
 
         UsefulInfo.sessionStartedTime = Date.now();
 

@@ -18,7 +18,6 @@ import {LocalizationManager} from "../../gene/localization/index";
 import {TeamSpam} from "../features/TeamSpam";
 import {ToggleDebugClickerButton} from "./ToggleDebugClickerButton";
 import {LatencyManager} from "../../laser/client/network/LatencyManager";
-import {APIManager} from "../networking/APIManager";
 import {GameSettings} from "../../laser/client/GameSettings";
 import {SpectateByTagPopup} from "../popups/SpectateByTagPopup";
 import {LogicDataTables} from "../../logic/data/LogicDataTables";
@@ -102,26 +101,6 @@ export class DebugMenu extends DebugMenuBase {
         "KIT_MOVE_HACK",
         "ANTI_KNOCKBACK",
         "BYPASS_ANTI_PROFANITY"
-    ];
-
-    private static vipOnlyFunctions: string[] = [
-        "AUTO_DODGE",
-        "AUTO_AIM",
-        "AUTO_ULTI",
-        "AUTO_HYPERCHARGE",
-        "HOLD_TO_SHOOT",
-        "AUTO_MOVE_TO_TARGET",
-        "ONLINE_SKIN_CHANGER",
-
-        "AI_ON_OFF",
-        "HIDE_SHOW_ME_FOR_ALL",
-        "HIDE_SHOW_TG",
-        "HIDE_SHOW_PREFIX",
-        "FOLLOW_CLOSEST_TEAMMATE",
-        "AUTO_PLAY_AGAIN",
-        "AUTO_EXIT_AFTER_BATTLE",
-        "STOP_LOLA_CLONE",
-        "KIT_MOVE_HACK"
     ];
 
     constructor() {
@@ -296,10 +275,8 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("USE_LEGACY_BACKGROUND", -1, -1, 0, EDebugCategory.GFX, Configuration.useLegacyThemeMode);
         // FIXME this.createDebugMenuButton("SKIP_STARR_DROP_ANIMATION", -1, -1, 0, EDebugCategory.GFX, Configuration.skipRandomAnimation);
 
-        if (LogicVersion.isNDA) {
-            // Deprecated v61.249  this.createDebugMenuButton("ANTI_KNOCKBACK", -1, -1, 0, EDebugCategory.BATTLE, Configuration.antiknockback ? 1 : 0);
-            this.createDebugMenuButton("HIDE_LOBBY_INFO", -1, -1, 0, EDebugCategory.GFX, 0);
-        }
+        // Deprecated v61.249  this.createDebugMenuButton("ANTI_KNOCKBACK", -1, -1, 0, EDebugCategory.BATTLE, Configuration.antiknockback ? 1 : 0);
+        this.createDebugMenuButton("HIDE_LOBBY_INFO", -1, -1, 0, EDebugCategory.GFX, 0);
 
         this.createDebugMenuButton("MOVEMENT_BASED_AUTOSHOOT", -1, -1, 0, EDebugCategory.BATTLE, Configuration.movementBasedAutoshoot ? 1 : 0);
         this.createDebugMenuButton("SPECTATE_BY_TAG", -1, -1, 0, EDebugCategory.BATTLE);
@@ -308,14 +285,6 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("AUTO_EXIT_AFTER_BATTLE", -1, -1, 0, EDebugCategory.BATTLE, Configuration.autoExitAfterBattle ? 1 : 0);
         this.createDebugMenuButton("MARK_FAKE_LEON", -1, -1, 0, EDebugCategory.BATTLE, Configuration.markFakeNinja ? 1 : 0);
         this.createDebugMenuButton("NEXT_CAMERA_MODE", -1, -1, -1, EDebugCategory.CAMERA_MODE);
-
-        /// #if VIP
-        this.createDebugMenuButton("Live", -1, -1, 1, EDebugCategory.SC_UTILS);
-        this.createDebugMenuButton("+1 Spectator", -1, -1, 1, EDebugCategory.SC_UTILS);
-        this.createDebugMenuButton("+10 Spectator", -1, -1, 1, EDebugCategory.SC_UTILS);
-        this.createDebugMenuButton("+100 Spectator", -1, -1, 1, EDebugCategory.SC_UTILS);
-        this.createDebugMenuButton("+1337 Spectator", -1, -1, 1, EDebugCategory.SC_UTILS);
-        /// #endif
 
         this.createDebugMenuButton("SHOW_FPS", -1, -1, 2, EDebugCategory.USEFUL_INFO, Configuration.showFPS ? 1 : 0);
         this.createDebugMenuButton("SHOW_TIME", -1, -1, 2, EDebugCategory.USEFUL_INFO, Configuration.showCurrentTime ? 1 : 0);
@@ -413,11 +382,6 @@ export class DebugMenu extends DebugMenuBase {
             });
         }
         /// #endif
-        if (LogicVersion.isNDA && LogicVersion.isVip()) {
-            /// #if VIP
-            // dont create in home this.createDebugMenuButton("Disable X-Ray", -1, -1, 0, "X-Ray");
-            /// #endif
-        }
 
         //let searchHelp = this.movieClip.getTextFieldByName("search_help");
         //searchHelp?.setText("type here to search");
@@ -484,14 +448,6 @@ export class DebugMenu extends DebugMenuBase {
 
     private static isNotImplementedForAndroid(name: string): boolean {
         return DebugMenu.notImplementedAndroidFunctions.includes(name);
-    }
-
-    private static isNDAOnly(name: string): boolean {
-        return DebugMenu.ndaOnlyFunctions.includes(name);
-    }
-
-    private static isVipOnly(name: string): boolean {
-        return DebugMenu.vipOnlyFunctions.includes(name);
     }
 
     private accountButtonPressed(button: GameButton) {
@@ -564,100 +520,6 @@ export class DebugMenu extends DebugMenuBase {
 
                 GUI.showPopup(specPopup.instance, 1, 0, 1);
                 break;
-            /// #if VIP
-            case "AMT":
-            case "AUTO_MOVE_TO_TARGET":
-                if (text != "AMT")
-                    button.switchCheckbox(Configuration.moveToTarget);
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_MOVE_TARGET", !Configuration.moveToTarget));
-
-                Configuration.moveToTarget = !Configuration.moveToTarget;
-                Configuration.save();
-                break;
-            case "AUTO_AIM":
-                button.switchCheckbox(Configuration.autoAim);
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_AIM", !Configuration.autoAim));
-
-                Configuration.autoAim = !Configuration.autoAim;
-                Configuration.save();
-                break;
-            case "AUTO_ULTI":
-                button.switchCheckbox(Configuration.autoUlti);
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_ULTI", !Configuration.autoUlti));
-
-                Configuration.autoUlti = !Configuration.autoUlti;
-                Configuration.save();
-                break;
-            case "AUTO_HYPERCHARGE":
-                button.switchCheckbox(Configuration.autoOvercharge);
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_HYPERCHARGE", !Configuration.autoOvercharge));
-
-                Configuration.autoOvercharge = !Configuration.autoOvercharge;
-                Configuration.save();
-                break;
-            case "HOLD_TO_SHOOT":
-                button.switchCheckbox(Configuration.holdToShoot);
-                GUI.showFloaterText(LocalizationManager.getStateString("HOLD_TO_SHOOT", !Configuration.holdToShoot));
-
-                Configuration.holdToShoot = !Configuration.holdToShoot;
-                Configuration.save();
-                break;
-            case "STOP_LOLA_CLONE":
-                Configuration.lolaControlState = (Configuration.lolaControlState + 1) % 3;
-                button.switchCheckbox(Configuration.lolaControlState === 0);
-
-                GUI.showFloaterText(LocalizationManager.getString("LOLA_CONTROL_" + Configuration.lolaControlState));
-
-                Configuration.save();
-                break;
-            case "KIT_MOVE_HACK":
-                if (!Configuration.kitMoveHack) {
-                    this.summonDebugDangerousPopup(button, this.switchKitMoveHackFunction);
-                    return;
-                }
-
-                this.switchKitMoveHackFunction(button);
-                break;
-            case "ANTI_KNOCKBACK":
-                if (!Configuration.antiknockback) {
-                    this.summonDebugDangerousPopup(button, this.switchAntiKnockbackFunction);
-                    return;
-                }
-
-                this.switchAntiKnockbackFunction(button);
-                break;
-            case "FOLLOW_CLOSEST_TEAMMATE":
-                button.switchCheckbox(Configuration.moveToAlly);
-                GUI.showFloaterText(LocalizationManager.getStateString("FOLLOW_ALLY", !Configuration.moveToAlly));
-
-                Configuration.moveToAlly = !Configuration.moveToAlly;
-                Configuration.save();
-                break;
-            case "AUTO_PLAY_AGAIN":
-                button.switchCheckbox(Configuration.autoPlayAgain);
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_PLAY_AGAIN", !Configuration.autoPlayAgain));
-
-                Configuration.autoPlayAgain = !Configuration.autoPlayAgain;
-                Configuration.save();
-                break;
-            case "AUTO_EXIT_AFTER_BATTLE":
-                button.switchCheckbox(Configuration.autoExitAfterBattle);
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("AUTO_EXIT_AFTER_BATTLE", !Configuration.autoExitAfterBattle)
-                );
-
-                Configuration.autoExitAfterBattle = !Configuration.autoExitAfterBattle;
-                Configuration.save();
-                break;
-            case "AUTO_DODGE":
-                GUI.showFloaterText(LocalizationManager.getStateString("AUTO_DODGE", !Configuration.autoDodge));
-
-                Configuration.autoDodge = !Configuration.autoDodge;
-                Configuration.save();
-                break;
-
-            /// #endif
             case "ANTI_AFK":
                 button.switchCheckbox(Configuration.antiAFK);
                 GUI.showFloaterText(LocalizationManager.getStateString("ANTI_AFK", !Configuration.antiAFK));
@@ -1219,30 +1081,6 @@ export class DebugMenu extends DebugMenuBase {
         }
     }
 
-    private scUtilsButtonPressed(button: GameButton) {
-        let text = button.getOriginalName();
-
-        switch (text) {
-            /// #if VIP
-            case "Live":
-                APIManager.addSpectators(1, true);
-                break;
-            case "+1 Spectator":
-                APIManager.addSpectators(1);
-                break;
-            case "+10 Spectator":
-                APIManager.addSpectators(10);
-                break;
-            case "+100 Spectator":
-                APIManager.addSpectators(100);
-                break;
-            case "+1337 Spectator":
-                APIManager.addSpectators(1337);
-                break;
-            /// #endif
-        }
-    }
-
     private serverButtonPressed(button: GameButton) {
         let text = button.getOriginalName();
 
@@ -1274,29 +1112,6 @@ export class DebugMenu extends DebugMenuBase {
 
                 GameMain.reloadGame();
                 break;
-        }
-    }
-
-    private skinChangerButtonPressed(button: GameButton) {
-        let text = button.getOriginalName();
-
-        switch (text) {
-            /// #if VIP
-            case "SKIN_CHANGER":
-                button.switchCheckbox(Configuration.skinChanger);
-                Configuration.skinChanger = !Configuration.skinChanger;
-                Configuration.save();
-
-                if (Configuration.skinChanger) {
-                    SkinChanger.patch();
-                }
-                else {
-                    SkinChanger.revertPatches();
-                }
-                break;
-            case "ONLINE_SKIN_CHANGER":
-                break;
-            /// #endif
         }
     }
 
@@ -1471,11 +1286,6 @@ export class DebugMenu extends DebugMenuBase {
     }
 
     isButtonAvailable(name: string): boolean {
-        if (DebugMenu.isVipOnly(name) && LogicVersion.isFree()) {
-            GUI.showFloaterText(LocalizationManager.getString("VIP_ONLY"));
-            return false;
-        }
-
         if (DebugMenu.isNotImplemented(name)) {
             if (LogicVersion.isDeveloperBuild()) {
                 console.warn("DebugMenu.isButtonAvailable", name, "is not implemented!");
@@ -1501,11 +1311,6 @@ export class DebugMenu extends DebugMenuBase {
             }
 
             GUI.showFloaterText(LocalizationManager.getString("NOT_IMPLEMENTED_YET_IOS"));
-            return false;
-        }
-
-        if (DebugMenu.isNDAOnly(name) && !LogicVersion.isNDA) {
-            GUI.showFloaterText(LocalizationManager.getString("NOT_IMPLEMENTED_YET"));
             return false;
         }
 
@@ -1564,14 +1369,8 @@ export class DebugMenu extends DebugMenuBase {
             case "PROXY":
                 debugMenu.proxyButtonPressed(gameButton);
                 break;
-            case "SC_UTILS":
-                debugMenu.scUtilsButtonPressed(gameButton);
-                break;
             case "SERVERS":
                 debugMenu.serverButtonPressed(gameButton);
-                break;
-            case "SKIN_CHANGER":
-                debugMenu.skinChangerButtonPressed(gameButton);
                 break;
             case "STREAMER_MODE":
                 debugMenu.streamerModeButtonPressed(gameButton);

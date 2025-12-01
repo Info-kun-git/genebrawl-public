@@ -44,7 +44,6 @@ export class Debug {
     private static userImagesScreen?: UserImagesScreen;
     private static hamster?: Hamster;
     private static battleSettingsPopup?: BattleSettingsPopup;
-    private static state: number;
     private static latencyTestsAdded: boolean;
     private static resourcesLoaded: boolean;
 
@@ -52,10 +51,6 @@ export class Debug {
     static isGeneAssetsPreloaded: boolean = false;
 
     private static displayObjectQueue: DisplayObject[] = [];
-
-    static init() {
-        this.state = -1;
-    }
 
     static addResourcesToLoad() {
         if (!this.resourcesLoaded) {
@@ -103,7 +98,7 @@ export class Debug {
         if (this.debugHud) {
             const usefulInfoState = UsefulInfo.canBeUpdated();
 
-            if (usefulInfoState !== this.debugHud.getShowMessageState() && LogicVersion.isFree()) {
+            if (usefulInfoState !== this.debugHud.getShowMessageState()) {
                 this.debugHud.showMessages(usefulInfoState);
             }
 
@@ -129,15 +124,6 @@ export class Debug {
 
         this.lobbyInfo?.update();
         this.battleSettingsPopup?.update(deltaTime);
-
-        if (HomeScreen.speechCharacter) { // we need to hide this if mode was activated
-            if (this.available) {
-                HomeScreen.speechCharacter.hide();
-                GameMain.getHomeSprite().removeChild(HomeScreen.speechCharacter);
-
-                HomeScreen.speechCharacter = undefined;
-            }
-        }
 
         Storage.dvd.filter(e => e.createdOnStage).forEach(e => e.update());
 
@@ -275,39 +261,18 @@ export class Debug {
     }
 
     static toggleDebugButtonPressed() {
-        /// #if DEBUG
-        if (LogicVersion.isDeveloperBuild())
-            this.state = 1; // bypass hack (if you want so, comment it, idc)
-        /// #endif
-
-        if (this.available || LogicVersion.isFree()) {
-            if (this.debugInfo?.visibility) {
-                this.debugInfo?.hide();
-            }
-
-            this.debugMenu?.toggle();
-            console.log(this.debugMenu);
-            if (this.hamster?.visibility) {
-                this.hamster?.toggle();
-            }
-
-            if (this.battleSettingsPopup?.visibility) {
-                this.battleSettingsPopup?.toggle();
-            }
-
-            Configuration.save(); // just to be sure
+        if (this.debugInfo?.visibility) {
+            this.debugInfo?.hide();
         }
-        else {
-            /// #if VIP
-            if (Configuration.validKey === Constants.UNAVAILABLE_KEY_STRING) {
-                return GUI.showFloaterText(
-                    LocalizationManager.getString("KEY_UNAVAILABLE")
-                );
-            }
 
-            GUI.showFloaterText(LocalizationManager.getString("NEED_TO_ACTIVATE").replace("$KEY", Configuration.validKey));
-            Application.copyString(`/activate ${Configuration.validKey}`);
-            /// #endif
+        this.debugMenu?.toggle();
+        console.log(this.debugMenu);
+        if (this.hamster?.visibility) {
+            this.hamster?.toggle();
+        }
+
+        if (this.battleSettingsPopup?.visibility) {
+            this.battleSettingsPopup?.toggle();
         }
     }
 
@@ -459,17 +424,5 @@ export class Debug {
 
             this.battleSettingsPopup.destruct();
         }
-    }
-
-    static changeDebugAvailable(state: number) {
-        this.state = state;
-    }
-
-    static get available() {
-        return this.state == 1;
-    }
-
-    static get isChecked() {
-        return this.state != -1;
     }
 }
