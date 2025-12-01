@@ -64,19 +64,7 @@ export class Filesystem {
             return null;
         }
     }
-
-    static isDirectory(path: string) {
-        try {
-            const file = new File(path, 'w');
-
-            file.close();
-
-            return false;
-        } catch (e: any) {
-            return e.message.includes("Is a directory");
-        }
-    }
-
+    
     static createDirectoryIfNotExist(path: string) {
         const directories = path.split("/");
 
