@@ -2,7 +2,7 @@
 # Gene Brawl
 
 A frida-based modification for Brawl Stars.  
-**Version:** `62.250` (not fully supported)  
+**Version:** `62.250` or iOS `62.258` (both are partially supported)
 
 ## Features
 
