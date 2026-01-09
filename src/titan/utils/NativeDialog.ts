@@ -2,7 +2,7 @@ import {Libg} from "../../libs/Libg";
 import {INativeDialogListener} from "./INativeDialogListener";
 
 const nativeDialogInternal = new NativeFunction(
-    Libg.offset(0xC37E10, 0xBA8188), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']
 );
 
 export class NativeDialog {

@@ -1,10 +1,10 @@
 import {Libg} from "../../libs/Libg";
 
 const Screen_getWidth = new NativeFunction( // ios: "screenWidth" | %s?time=%d
-    Libg.offset(0xBC5A84, 0xBA3524), 'float', []
+    Libg.offset(0xB3853C, 0x0), 'float', []
 );
 const Screen_getHeight = new NativeFunction( // ios: "screenHeight" | %s?time=%d
-    Libg.offset(0xBC5A90, 0xBA3530), 'float', []
+    Libg.offset(0xB38548, 0x0), 'float', []
 );
 
 export class Screen {

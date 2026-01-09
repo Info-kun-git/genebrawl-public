@@ -3,7 +3,7 @@ import {Libg} from "../../libs/Libg";
 import {HashTagCodeGenerator} from "../../titan/logic/util/HashTagCodeGenerator";
 
 const FriendEntry_decode = new NativeFunction(
-    Libg.offset(0x984294, 0x48C3A0), 'void', ['pointer', 'pointer'] // 20105 decode
+    Libg.offset(0xD2C318, 0x0), 'void', ['pointer', 'pointer'] // 20105 decode
 );
 
 const FriendEntry_PlayerDisplayDataOffset = 144;

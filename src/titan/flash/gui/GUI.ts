@@ -2,26 +2,26 @@ import {RGBA} from "../../../gene/features/RGBA";
 import {Libg} from "../../../libs/Libg";
 import {DisplayObject} from "../DisplayObject";
 
-const GUI_instance = Libg.offset(0x103D910, 0xEE61B8); // "TID_TEAM_SEARCH_NO_TEAM_CODE"
+const GUI_instance = Libg.offset(0x115DB78, 0xEC2908); // "TID_TEAM_SEARCH_NO_TEAM_CODE"
 
 const GUI_showFloaterText = new NativeFunction( // "TID_TEAM_SEARCH_NO_TEAM_CODE"
-    Libg.offset(0x4BA5F4, 0xA6C44), 'void', ['pointer', 'pointer', 'int', 'float']
+    Libg.offset(0x56488C, 0xA4984), 'void', ['pointer', 'pointer', 'int', 'float']
 ); 
 
 const GUI_showPopup = new NativeFunction( // "TID_TEAM_AD_JOIN_FAIL_ALREADY_IN_A_TEAM" function higher
-    Libg.offset(0x4BB190, 0xA734C), 'void', ['pointer', 'pointer', 'bool', 'bool', 'bool']
+    Libg.offset(0x5653D4, 0xA509C), 'void', ['pointer', 'pointer', 'bool', 'bool', 'bool']
 );
 
 const GUI_getTopPopup = new NativeFunction( // "TID_TEAM_MEMBER_LEFT_%i" function higher
-    Libg.offset(0x4BBA54, 0xA78B0), 'pointer', ['pointer']
+    Libg.offset(0x0, 0x0), 'pointer', ['pointer']
 );
 
 const GUI_closeAllPopups = new NativeFunction( // "Got team: %i,%i", then last function in (down)
-    Libg.offset(0x4BBC68, 0xA7A00), 'void', ['pointer']
+    Libg.offset(0x565DE0, 0xA5750), 'void', ['pointer']
 ); 
 
 const GUI_resizeToScreenHeight = new NativeFunction( // TODO
-    Libg.offset(-1, -1), 'void', [ 'pointer' ]
+    Libg.offset(0x0, 0x0), 'void', [ 'pointer' ]
 );
 
 export class GUI {

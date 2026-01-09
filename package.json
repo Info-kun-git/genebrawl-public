@@ -1,6 +1,6 @@
 {
   "name": "genebrawl",
-  "version": "62.250.0",
+  "version": "65.165.0",
   "description": "A frida-based modification for Brawl Stars",
   "main": "src/index.ts",
   "scripts": {

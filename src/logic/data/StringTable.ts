@@ -6,11 +6,11 @@ import {Libg} from "../../libs/Libg";
 import {LogicVersion} from "../LogicVersion";
 
 const StringTable_getString = new NativeFunction( // "%s texts not yet loaded"
-    Libg.offset(0x812234, 0x376D08), 'pointer', ['pointer']
+    Libg.offset(0x903B68, 0x3703C4), 'pointer', ['pointer']
 );
 
 const StringTable_getCurrentLanguageCode = new NativeFunction( // "TID_ADDITIONAL_GEM_TOOLTIP_FOR_JAPAN"
-    Libg.offset(0x812530, 0x376FF0), 'pointer', []
+    Libg.offset(0x903F50, 0x3706AC), 'pointer', []
 );
 
 export class StringTable {

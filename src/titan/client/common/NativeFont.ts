@@ -1,7 +1,7 @@
 import {Libg} from "../../../libs/Libg";
 
 const NativeFont_formatString = new NativeFunction( // "NativeFont::formatString - Invalid UTF-8"
-    Libg.offset(0xA1CC60, 0x965F30), 'pointer', ['pointer', 'pointer', 'float', 'float', 'int', 'float', 'bool', 'bool', 'float']
+    Libg.offset(0x9460E8, 0x0), 'pointer', ['pointer', 'pointer', 'float', 'float', 'int', 'float', 'bool', 'bool', 'float']
 );
 
 export class NativeFont {

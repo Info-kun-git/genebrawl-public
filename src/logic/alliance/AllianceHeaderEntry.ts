@@ -1,9 +1,9 @@
-    import {GradientNickname} from "../../gene/features/GradientNickname";
+import {GradientNickname} from "../../gene/features/GradientNickname";
 import {Libg} from "../../libs/Libg";
 import {HashTagCodeGenerator} from "../../titan/logic/util/HashTagCodeGenerator";
 
 const AllianceHeaderEntry_decode = new NativeFunction( // 24399 decode
-    Libg.offset(0x969BD0, 0x478CE8), 'void', ['pointer', 'pointer']
+    Libg.offset(0xD13440, 0x0), 'void', ['pointer', 'pointer']
 );
 
 const AllianceHeaderEntry_nameOffset = 8;

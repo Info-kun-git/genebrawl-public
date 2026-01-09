@@ -4,10 +4,9 @@ import {BattleMode} from "./BattleMode";
 import {Configuration} from "../../gene/Configuration";
 import {LogicBattleModeClient} from "./LogicBattleModeClient";
 import {LogicCharacterData} from "../data/LogicCharacterData";
-import {LogicVersion} from "../LogicVersion";
 
 const ClientInputManager_addInput = new NativeFunction( // check by ClientInput ctor
-    Libg.offset(0x6746D8, 0x21C2A0), 'void', ['pointer', 'pointer']
+    Libg.offset(0x746044, 0x21D0B8), 'void', ['pointer', 'pointer']
 );
 
 const pingOffset = 48;

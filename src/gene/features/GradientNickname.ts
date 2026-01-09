@@ -6,7 +6,7 @@ import {Mathematics} from "../../utils/Mathematics";
 interface Nicknames { [key: string]: string; }
 
 const LogicPlayerTitleData_getTitleTID = new NativeFunction( // "TitleTID"
-    Libg.offset(0x0, 0x404500), 'pointer', ['pointer']
+    Libg.offset(0x0, 0x0), 'pointer', ['pointer']
 );
 
 // TODO: Custom titles for geneteam members

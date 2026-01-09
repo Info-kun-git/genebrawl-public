@@ -1,21 +1,19 @@
 import {Configuration} from "../../../gene/Configuration";
 import {Libg} from "../../../libs/Libg";
-import {LogicCharacterData} from "../../data/LogicCharacterData";
 import {GameObject} from "./GameObject";
 import {LogicCharacterClient} from "./LogicCharacterClient";
 
 const Character_updateHealthBar = new NativeFunction(
-    Libg.offset(0x43864C, 0x3AA8C), 'void', ['pointer', 'float'] // "hpNumber"
+    Libg.offset(0x4D9C50, 0x0), 'void', ['pointer', 'float'] // "hpNumber"
 );
 
 const ImpostorMaterial_bind = new NativeFunction(
-    Libg.offset(0x465A14, 0x61410), 'void', [ 'pointer', 'int', 'pointer' ]
+    Libg.offset(0x0, 0x0), 'void', [ 'pointer', 'int', 'pointer' ]
 )
 
 // setaddcolor 0x912FB0 setmulcolor 0x912F2C
 
-const ammoBarOffset = 2544;
-const shaderOutlineOffset = 848
+const ammoBarOffset = 2568;
 
 export class Character extends GameObject {
     constructor(instance: NativePointer) {
@@ -28,12 +26,6 @@ export class Character extends GameObject {
         );
     }
 
-    getCharacterData() {
-        return new LogicCharacterData(
-            this.instance.add(12).readPointer()
-        );
-    }
-
     toString() {
         const logicCharacter = this.getLogicCharacter(); // For test
 
@@ -41,7 +33,6 @@ export class Character extends GameObject {
     }
 
     static patch() {
-        let self = NULL
         Interceptor.replace(ImpostorMaterial_bind, new NativeCallback((material, type, value) => {
             if (!Configuration.drawOutline) {
                 material.add(868).writeInt(5)

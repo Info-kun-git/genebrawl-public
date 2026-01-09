@@ -33,22 +33,18 @@ import {HomeScreen} from "../../logic/home/HomeScreen";
 import {LogicDefines} from "../../LogicDefines";
 import {StringTable} from "../../logic/data/StringTable";
 import {StartSpectateMessage} from "../../logic/message/battle/StartSpectateMessage";
-import {LogicRevealMutationCommand} from "../../logic/command/LogicRevealMutationCommand";
 import {HomeMode} from "../../logic/home/HomeMode";
 import {GlobalID} from "../../logic/data/GlobalID";
 import {Storage} from "../Storage";
 import {LogicData} from "../../logic/data/LogicData";
-import {SkinChanger} from "../features/SkinChanger";
 import {ToggleDebugMenuButton} from "./ToggleDebugMenuButton";
 import {ProfileByTagPopup} from "../popups/ProfileByTagPopup";
 import {NativeDialog} from "../../titan/utils/NativeDialog";
 import {UsefulInfo} from "../features/UsefulInfo";
 import {DVD} from "../features/DVD";
-import {PlayAgainMessage} from "../../logic/message/battle/PlayAgainMessage";
 import {TestCase} from "../TestCase";
 import {IButtonListener} from "../../titan/flash/gui/IButtonListener";
 import {GeneAssets} from "../GeneAssets";
-import {ClientInfoMessage} from "../../logic/message/udp/ClientInfoMessage";
 import {NativeHTTPClient} from "../../titan/utils/NativeHTTPClient";
 import {Path} from "../../titan/Path";
 import {DebugDangerousFunctionPopup} from "./DebugDangerousFunctionPopup";
@@ -205,7 +201,6 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("UNLOCK_GEARS", 117, -1, 2, EDebugCategory.GEARS);
         this.createDebugMenuButton("UNLOCK_CURRENT_BRAWL_PASS_SEASON", 0x9F, 0, 2, EDebugCategory.BRAWL_PASS);
         this.createDebugMenuButton("UNLOCK_CURRENT_BRAWL_PASS_PLUS_SEASON", 0x9F, -1, 2, EDebugCategory.BRAWL_PASS);
-        this.createDebugMenuButton("SKIN_CHANGER", -1, -1, 0, EDebugCategory.SKIN_CHANGER, Configuration.skinChanger ? 1 : 0);
         this.createDebugMenuButton("HIDE_ULTI_AIMING", -1, -1, 0, EDebugCategory.BATTLE, Configuration.showUlti ? 0 : 1);
 
         this.createDebugMenuButton("STATIC_BACKGROUND", -1, -1, 2, EDebugCategory.GFX, Configuration.staticBackground ? 1 : 0);
@@ -303,8 +298,6 @@ export class DebugMenu extends DebugMenuBase {
                 UsefulInfo.disableDevBuildMessage = !UsefulInfo.disableDevBuildMessage;
             });
 
-            this.createDebugMenuButton(`Spawn Test Popup`, -1, -1, -1, EDebugCategory.TESTS);
-            this.createDebugMenuButton("Send StartSpectate myself", -1, -1, 0, EDebugCategory.BATTLE);
             this.createDebugMenuButton("DVD Test", -1, -1, 0, EDebugCategory.TESTS);
 
             if (GeneAssets.getAsset("CUSTOM_BG"))
@@ -423,16 +416,6 @@ export class DebugMenu extends DebugMenuBase {
                     LocalizationManager.getStateString("OUT_OF_SYNC", Configuration.antiOutOfSync)
                 );
                 break;
-            case "Reveal Demon Mutation":
-                const _command = new LogicRevealMutationCommand(0);
-
-                HomeMode.addCommand(_command);
-                break;
-            case "Reveal Angel Mutation":
-                const command = new LogicRevealMutationCommand(1);
-
-                HomeMode.addCommand(command);
-                break;
         }
     }
 
@@ -517,12 +500,6 @@ export class DebugMenu extends DebugMenuBase {
 
                 Configuration.movementBasedAutoshoot = !Configuration.movementBasedAutoshoot;
                 Configuration.save();
-                break;
-            case "Send StartSpectate myself":
-                let message = new StartSpectateMessage(MessageManager.accountId, false);
-
-                MessageManager.sendMessage(message);
-                //  MessageManager.sendMessage(new StopSpectateMessage());
                 break;
             case "MARK_FAKE_LEON":
                 button.switchCheckbox(Configuration.markFakeNinja);
@@ -975,17 +952,6 @@ export class DebugMenu extends DebugMenuBase {
                     LocalizationManager.getStateString("HIDE_LEAGUE_BATTLE_CARD", Configuration.hideLeagueBattleCard)
                 );
                 break;
-            case "USE_OLD_INTRO":
-                button.switchCheckbox(Configuration.useOldIntro);
-                Configuration.useOldIntro = !Configuration.useOldIntro;
-                Configuration.save();
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("USE_OLD_INTRO", Configuration.useOldIntro)
-                );
-
-                LogicDataTables.patchClientGlobals();
-                break;
 
             case "CHARACTER_SOUNDS":
                 button.switchCheckbox(!Configuration.heroSounds);
@@ -1089,9 +1055,6 @@ export class DebugMenu extends DebugMenuBase {
         let text = button.getOriginalName();
 
         switch (text) {
-            case "Spawn Test Popup":
-                Debug.toggleUserImagesButtonPressed();
-                break;
             case "DVD Test": // be quiet about this
                 // Nothing ever happened here.
                 break;
@@ -1172,14 +1135,6 @@ export class DebugMenu extends DebugMenuBase {
                     LocalizationManager.getStateString("BATTLE_INFO", Configuration.showBattleInfo)
                 );
                 break;
-            case "Show svo button":
-                button.switchCheckbox(Configuration.showSVOButton);
-
-                Configuration.showSVOButton = !Configuration.showSVOButton;
-                Configuration.save();
-
-                Debug.getSVOButton().visibility = Configuration.showSVOButton;
-                break;
             case "SHOW_BATTLE_PING":
                 button.switchCheckbox(Configuration.showBattlePing);
 
@@ -1209,25 +1164,6 @@ export class DebugMenu extends DebugMenuBase {
                 );
                 break;
         }
-    }
-
-    private xrayButtonPressed(button: GameButton) {
-        let text = button.getOriginalName();
-
-        // text - playerName
-
-        if (text == "Disable X-Ray") {
-            GUI.showFloaterText(
-                LocalizationManager.getString("XRAY_OFF")
-            );
-
-            BattleMode.xrayTargetGlobalId = -1;
-            BattleMode.xrayTargetPlayerIndex = -1;
-
-            return;
-        }
-
-        BattleMode.setXrayTarget(text);
     }
 
     isButtonAvailable(name: string): boolean {
@@ -1325,9 +1261,6 @@ export class DebugMenu extends DebugMenuBase {
                 break;
             case "USEFUL_INFO":
                 debugMenu.usefulInfoButtonPressed(gameButton);
-                break;
-            case "XRAY":
-                debugMenu.xrayButtonPressed(gameButton);
                 break;
             case "MISC":
                 debugMenu.miscButtonPressed(gameButton);

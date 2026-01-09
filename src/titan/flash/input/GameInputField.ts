@@ -3,11 +3,11 @@ import {TextField} from "../TextField";
 import {InputField} from "./InputField";
 
 const GameInputField_GameInputField = new NativeFunction( // "team_code_input", then search in BandMailPopup::BandMailPopup function after malloc
-    Libg.offset(0x4C1610, 0xAABF4), 'void', ['pointer', 'pointer', 'pointer']
+    Libg.offset(0x56CEA4, 0x0), 'void', ['pointer', 'pointer', 'pointer']
 );
 
 const GameInputField_setScaleTextIfNeed = new NativeFunction( // last function in BandMailPopup::BandMailPopup
-    Libg.offset(0x4C1988, 0xAAEB8), 'void', ['pointer', 'bool']
+    Libg.offset(0x56D1F4, 0x0), 'void', ['pointer', 'bool']
 );
 
 const activateVtableOffset = 7 * Process.pointerSize;

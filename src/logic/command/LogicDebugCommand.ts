@@ -3,7 +3,7 @@ import {Libg} from "../../libs/Libg";
 import {LogicCommand} from "./LogicCommand";
 
 const LogicDebugCommand_LogicDebugCommand = new NativeFunction( // "LogicDebugCommand::loadFromJSON actionIdx not found!"
-    Libg.offset(0x84FEA8, 0x3A4A18), 'void', ['pointer']
+    Libg.offset(0xBE8158, 0x0), 'void', ['pointer']
 );
 
 const actionIdxOffset = 28;

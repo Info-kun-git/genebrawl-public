@@ -1,11 +1,8 @@
 import {Configuration} from "../../gene/Configuration";
-import {SkinChanger} from "../../gene/features/SkinChanger";
 import {GameStateManager} from "../../laser/client/state/GameStateManager";
 import {Libg} from "../../libs/Libg";
 import {LogicCommand} from "../command/LogicCommand";
 import {LogicCommandManager} from "../command/LogicCommandManager";
-import {LogicSelectSkinCommand} from "../command/LogicSelectSkinCommand";
-import {LogicSkinData} from "../data/LogicSkinData";
 import {logicConfDataOffset, logicDailyDataOffset} from "./LogicClientHome";
 
 const logicHomeModeOffset = 72;
@@ -14,7 +11,7 @@ const homeScreenOffset = 40;
 const LogicHomeMode_logicClientHomeOffset = 32;
 
 const HomeMode_addCommand = new NativeFunction( // executeCommand: pCommand == nullptr
-    Libg.offset(0x80A40C, 0x37021C), 'int', ['pointer', 'pointer']
+    Libg.offset(0x8F5B44, 0x3693B4), 'int', ['pointer', 'pointer']
 );
 
 const bypassOutOfSyncCommands = [

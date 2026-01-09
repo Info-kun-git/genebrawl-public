@@ -1,6 +1,4 @@
 import {Path} from "../titan/Path";
-import {Constants} from "./Constants";
-import {NCoder} from "./networking/NetworkManager";
 
 const DO_NOT_SAVE_KEYS = [
     "isChinaVersion",
@@ -11,10 +9,6 @@ export class Configuration {
     // static [name]: [type] = [defaultValue (optional)]
     static useProxy: boolean;
     static useStage: boolean;
-
-    static key: string;
-    static validKey: string = Constants.UNAVAILABLE_KEY_STRING;
-    static nonce: string;
 
     static showSidemask: boolean = true;
     static emoteAnimation: boolean = true;
@@ -47,12 +41,9 @@ export class Configuration {
     static holdToShoot: boolean;
     static autoUlti: boolean;
     static autoOvercharge: boolean;
-    static autoDodge: boolean;
     static movementBasedAutoshoot: boolean;
     static skipBattleEndReplay: boolean;
     static moveToAlly: boolean;
-    static skinChanger: boolean = false;
-    static skinChangerOnline: boolean = false;
     static themeId: number = -1;
     static themeMusicId: number = -1;
     static useLegacyThemeMode: boolean = false;
@@ -95,9 +86,6 @@ export class Configuration {
     // Battle servers
     static regionId: number = -1;
 
-    // skinChanger
-    static skinChangerObjects: { [key: number]: number; } = {};
-
     // Visual name
     static accountNames: { [key: string]: string; } = {};
 
@@ -126,7 +114,7 @@ export class Configuration {
         try {
             let json = File.readAllText(path);
 
-            let decryptedJson = JSON.parse(NCoder.n2s(json));
+            let decryptedJson = JSON.parse(json);
 
             for (let key in decryptedJson) {
                 (<any>this)[key] = decryptedJson[key];
@@ -152,9 +140,7 @@ export class Configuration {
         let path = Path.getDataPath() + "settings.json";
         let json = this.toJSON();
 
-        let encryptedJson = JSON.stringify(NCoder.s2n(json));
-
-        this.writeToFile(path, "w", encryptedJson);
+        this.writeToFile(path, "w", json);
 
         console.log("Configuration.save:", "saved successfully!");
     }
@@ -164,7 +150,6 @@ export class Configuration {
 
         for (let key of Object.keys(this)) {
             if (DO_NOT_SAVE_KEYS.includes(key)) {
-                //console.log("Configuration::toJSON:", `skip ${key}`);
                 continue;
             }
 

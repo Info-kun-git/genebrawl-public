@@ -9,11 +9,9 @@ import {LogicDataTables} from "../data/LogicDataTables";
 import {Configuration} from "../../gene/Configuration";
 import {GlobalID} from "../data/GlobalID";
 import {Stage} from "../../titan/flash/Stage";
-import {LogicVersion} from "../LogicVersion";
 import {MessageManager} from "../../laser/client/network/MessageManager";
 import {TeamSetMemberReadyMessage} from "../message/team/TeamSetMemberReadyMessage";
 import {Debug} from "../../gene/Debug";
-import {SpeechCharacter} from "../../gene/popups/SpeechCharacter";
 import {ContextMenu} from "../../titan/flash/gui/ContextMenu";
 import {Libc} from "../../libs/Libc";
 import {DownloadedImage} from "../../titan/flash/DownloadedImage";
@@ -25,11 +23,11 @@ const themeDataOffset = 2208; // xref from HomeScreen_calculateThemeScale, below
 const themeMovieClipOffset = 2096; // in HomeScreen_calculateThemeScale, smth like `v8 = sub_A4EBB4(*(_QWORD *)(a1 + 2096), "bg_colour");`
 
 const HomeScreen_calculateThemeScale = new NativeFunction(
-    Libg.offset(0x6E39E4, 0x278A38), 'void', ['pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer']
 );
 
 const HomeScreen_onRankedMatchTerminatedMessage = new NativeFunction(
-    Libg.offset(0x6EC164, 0x27F090), 'void', ['pointer', 'pointer'] // 22159 or "TID_RANKED_MATCH_TERMINATED_REASON_%i"
+    Libg.offset(0x7C4FBC, 0x0), 'void', ['pointer', 'pointer'] // 22159 or "TID_RANKED_MATCH_TERMINATED_REASON_%i"
 );
 
 /*
@@ -37,16 +35,15 @@ This is not HomeScreen::enter, this is just an inlined refreshTheme or whatever
 HomeScreen::init calls this anyway, so why we need this useless offset?
 чтобы ты спросил
 привет
+доброе утро
 
 const HomeScreen_enter = new NativeFunction(
     Libg.offset(-1, -1, -1), 'void', [ 'pointer' ] // "HomeScreen::enter - active theme sc file doesn't exist! theme: "
 )*/
 
-const HomeScreen_init = Libg.offset(0x6E28CC, 0x277BE0);
+const HomeScreen_init = Libg.offset(0x0, 0x0);
 
 export class HomeScreen {
-    static speechCharacter?: SpeechCharacter;
-
     static getInstance() {
         return HomeMode.getHomeScreen();
     }
@@ -77,21 +74,6 @@ export class HomeScreen {
         return new LogicThemeData(
             this.getInstance().add(themeDataOffset).readPointer()
         );
-    }
-
-    static replaceThemeByMovieClip(theme: MovieClip) {
-        let instance = this.getInstance();
-        let homeSprite = GameMain.getHomeSprite();
-        homeSprite.removeChild(instance.add(themeMovieClipOffset).readPointer());
-
-        this.setThemeMovieClip(theme);
-        this.calculateThemeScale();
-
-        console.log(theme.x, theme.y, theme.getWidth(), theme.getHeight());
-        //this.disableTheme(Configuration.darkTheme);
-        //this.getThemeMovieClip().setXY(Stage.getX() + 75, theme.getY());
-
-        homeSprite.addChildAt(instance.add(themeMovieClipOffset).readPointer(), 0);
     }
 
     static replaceThemeByImage(image: DownloadedImage) {
@@ -208,29 +190,6 @@ export class HomeScreen {
     }
 
     static patch() {
-        /*Interceptor.attach(HomeScreen_enter, {
-            onEnter(args) {
-                if (Configuration.autoReady)
-                    MessageManager.sendMessage(new TeamSetMemberReadyMessage(true));
-
-                Debug.getOpenChatButton().visibility = false;
-                ContextMenu.shouldShowContextMenu = true
-
-                //setTimeout(APIManager.requestVouchers, 1500); // TODO: fix crash here
-            },
-            onLeave() {
-                console.log("HomeScreen::enter called! configuration theme id: ", Configuration.themeId);
-
-                if (Configuration.themeId !== -1) {
-                    const themeData = LogicDataTables.getDataById(41, GlobalID.getInstanceID(Configuration.themeId)) as LogicThemeData;
-    
-                    HomeScreen.replaceTheme(themeData);
-                }
-
-                HomeScreen.disableTheme(Configuration.darkTheme);
-            }
-        })*/
-
         Interceptor.attach(HomeScreen_init, {
             onEnter(args) {
                 if (Configuration.autoReady)
@@ -240,8 +199,6 @@ export class HomeScreen {
                 ContextMenu.shouldShowContextMenu = true;
 
                 UsefulInfo.ticks = 0;
-
-                //setTimeout(APIManager.requestVouchers, 1500); // TODO: fix crash here
             },
             onLeave() {
                 console.log("HomeScreen::enter called! configuration theme id:", Configuration.themeId);

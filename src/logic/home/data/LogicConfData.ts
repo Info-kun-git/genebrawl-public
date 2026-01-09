@@ -6,7 +6,7 @@ import {LogicThemeData} from "../../data/LogicThemeData";
 import {Storage} from "../../../gene/Storage";
 
 const LogicConfData_getIntValue = new NativeFunction( // higher "shader/impostor_outline_glitch.vsh"
-    Libg.offset(0x993DE8, 0x496ED0), 'int', ['pointer', 'int', 'int']
+    Libg.offset(0x0, 0x0), 'int', ['pointer', 'int', 'int']
 );
 
 export class LogicConfData {

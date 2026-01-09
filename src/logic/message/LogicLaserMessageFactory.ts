@@ -12,7 +12,7 @@ import {ClaimVouncherFailedMessageReceived} from "./home/ClaimVouncherFailedMess
 import {TeamStreamMessage} from "./team/TeamStreamMessage";
 
 const LogicLaserMessageFactory_createMessageByType = new NativeFunction( // just search immediate value (messageType) like 26085 (output: MOV W8, #0x5F0D; jumptable 0000000100398FB0 default case)
-    Libg.offset(0x68F6C4, 0x46FCCC), 'pointer', ['pointer', 'int'] // or xref from message ctor...
+    Libg.offset(0x0, 0x0), 'pointer', ['pointer', 'int'] // or xref from message ctor...
 );
 
 export class LogicLaserMessageFactory {

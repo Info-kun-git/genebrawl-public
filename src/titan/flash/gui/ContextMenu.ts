@@ -1,7 +1,7 @@
 import {Libg} from "../../../libs/Libg";
 
 const ContextMenu_addButtonType = new NativeFunction(
-    Libg.offset(0x4AEB70, 0x9F9EC), 'void', ['pointer', 'pointer', 'int'] // "ContextMenu::addButtonType called with existing button type %d"
+    Libg.offset(0x55B7A8, 0x0), 'void', ['pointer', 'pointer', 'int'] // "ContextMenu::addButtonType called with existing button type %d"
 )
 
 export class ContextMenu {

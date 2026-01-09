@@ -12,22 +12,16 @@ import {Configuration} from "./Configuration";
 import {GUI} from "../titan/flash/gui/GUI";
 import {SoundManager} from "../titan/sound/SoundManager";
 import {LogicDataTables} from "../logic/data/LogicDataTables";
-import {Application} from "../titan/utils/Application";
 import {LocalizationManager} from "./localization/index";
 import {Resources} from "./Resources";
 import {GameStateManager} from "../laser/client/state/GameStateManager";
 import {LobbyInfo} from "./features/LobbyInfo";
 import {HamsterScreen} from "./popups/HamsterScreen";
-import {SVOButton} from "./debug/SVOButton";
 import {Storage} from "./Storage";
-import {Constants} from "./Constants";
 import {OpenChatButton} from "./debug/OpenChatButton";
 import {BattleSettingsPopup} from "./popups/BattleSettingsPopup";
-import {SpeechCharacter} from "./popups/SpeechCharacter";
-import {HomeScreen} from "../logic/home/HomeScreen";
 import {BattleDebug} from "./BattleDebug";
 import {MessageManager} from "../laser/client/network/MessageManager";
-import {UserImagesScreen} from "./popups/UserImagesScreen";
 import {Filesystem} from "./features/filesystem";
 import {Path} from "../titan/Path";
 
@@ -35,13 +29,11 @@ export class Debug {
     private static debugMenu?: DebugMenu;
     private static debugButton?: DebugButton;
     private static battleDebug?: BattleDebug;
-    private static SVOButton?: SVOButton;
     private static openChatButton?: OpenChatButton;
     private static debugInfo?: DebugInfo;
     private static debugHud?: DebugHud;
     private static lobbyInfo?: LobbyInfo;
     private static hamsterScreen?: HamsterScreen;
-    private static userImagesScreen?: UserImagesScreen;
     private static hamster?: Hamster;
     private static battleSettingsPopup?: BattleSettingsPopup;
     private static latencyTestsAdded: boolean;
@@ -141,8 +133,6 @@ export class Debug {
         if (this.openChatButton) {
             this.openChatButton.visibility = Configuration.showChatButton;
         }
-
-        this.userImagesScreen?.update(deltaTime);
         /// #endif
     }
 
@@ -169,10 +159,6 @@ export class Debug {
         return Debug.debugInfo;
     }
 
-    static createSpeechCharacter(text: string): SpeechCharacter {
-        return new SpeechCharacter(text);
-    }
-
     static create() {
         try {
             this.destruct(); // To make sure old debug menu doesn't exist
@@ -182,7 +168,6 @@ export class Debug {
             this.spawnLobbyInfo();
             this.spawnDebugButton();
             this.spawnDebugBattle();
-            //this.spawnSVOButton();
             this.spawnOpenChatButton();
             this.spawnDebugMenu();
             this.spawnDebugHud();
@@ -209,12 +194,6 @@ export class Debug {
         console.log("Debug.spawnDebugButton:", "spawned debug button at " + this.debugButton.x + "," + this.debugButton.y);
     }
 
-    private static spawnSVOButton() {
-        this.SVOButton = new SVOButton();
-
-        this.displayObjectQueue.push(this.SVOButton);
-    }
-
     private static spawnOpenChatButton() {
         this.openChatButton = new OpenChatButton();
 
@@ -238,10 +217,6 @@ export class Debug {
         this.battleSettingsPopup.hide();
 
         this.displayObjectQueue.push(this.battleSettingsPopup);
-    }
-
-    private static spawnUserImagesScreen() {
-        this.userImagesScreen = new UserImagesScreen();
     }
 
     private static storeReloadData() {
@@ -274,22 +249,6 @@ export class Debug {
         if (this.battleSettingsPopup?.visibility) {
             this.battleSettingsPopup?.toggle();
         }
-    }
-
-    static setupSpeechCharacter() {
-        const speechCharacter = this.createSpeechCharacter(LocalizationManager.getString("NEED_TO_ACTIVATE").replace("$KEY", Configuration.validKey));
-        //if (shouldHide) speechCharacter?.hideAfter(3)
-        GameMain.getHomeSprite().addChild(speechCharacter);
-
-        return speechCharacter;
-    }
-
-    static toggleUserImagesButtonPressed() {
-        this.userImagesScreen = new UserImagesScreen();
-
-        this.userImagesScreen.setXy();
-
-        GUI.showPopup(this.userImagesScreen.instance, 0, 0, 0);
     }
 
     static toggleDebugClickerButtonPressed() {
@@ -342,10 +301,6 @@ export class Debug {
         return this.battleDebug!;
     }
 
-    static getSVOButton(): SVOButton {
-        return this.SVOButton!;
-    }
-
     static getOpenChatButton(): OpenChatButton {
         return this.openChatButton!;
     }
@@ -372,10 +327,6 @@ export class Debug {
 
     static getAlphaPopup(): BattleSettingsPopup {
         return this.battleSettingsPopup!;
-    }
-
-    static getUserImagesScreen(): UserImagesScreen {
-        return this.userImagesScreen!;
     }
 
     static destruct() {

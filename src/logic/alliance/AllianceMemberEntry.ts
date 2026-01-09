@@ -3,7 +3,7 @@ import {Libg} from "../../libs/Libg";
 import {HashTagCodeGenerator} from "../../titan/logic/util/HashTagCodeGenerator";
 
 const AllianceMemberEntry_decode = new NativeFunction( // 24308 decode
-    Libg.offset(0x96A528, 0x4794AC), 'void', ['pointer', 'pointer']
+    Libg.offset(0xD13CA8, 0x0), 'void', ['pointer', 'pointer']
 );
 
 const AllianceMemberEntry_IDOffset = 40;

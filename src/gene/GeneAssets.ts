@@ -72,7 +72,7 @@ export class GeneAssets {
                     GeneAssets.downloadAsset(file.url).then((response) => {
                         if (response.getStatusCode() !== 200) {
                             console.warn("GeneAssets.preloadAssets:", "Server thrown", response.getStatusCode(), "code when tried to download", file.path, "asset. Skipping it!");
-                            NativeDialog.showNativeDialog(NULL, "Error", `Failed to load ${file.path} asset from server. Status code: ${response.getStatusCode()}`, "OK");
+                            NativeDialog.showNativeDialog(NULL, "Error", `Failed to download ${file.path} asset from the server. Status code: ${response.getStatusCode()}`, "OK");
                             return;
                         }
 
@@ -108,10 +108,6 @@ export class GeneAssets {
 
     static wasLoaded(file: string) {
         return GeneAssets.loaded.includes(file);
-    }
-
-    static wasDownloaded(file: string) {
-        return GeneAssets.downloaded.includes(file);
     }
 
     private static downloadAsset(url: string) {

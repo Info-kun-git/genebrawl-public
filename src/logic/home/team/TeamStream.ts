@@ -2,10 +2,10 @@ import {Libg} from "../../../libs/Libg";
 import {StreamItemList} from "./StreamItemList";
 
 const TeamStream_update = new NativeFunction(
-    Libg.offset(0x5020E8, 0xE25D4), 'void', ['pointer', 'float'] // "TID_CLAN_CHAT_JUMP_TO_NEW"
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'float'] // "TID_CLAN_CHAT_JUMP_TO_NEW"
 );
 
-const TeamStream_instance = Libg.offset(0x103D9B0, 0xEE6208);
+const TeamStream_instance = Libg.offset(0x115DC58, 0xEC2958);
 
 const TeamStream_StreamItemListOffset = 136;
 

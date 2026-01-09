@@ -1,33 +1,23 @@
 import {Libg} from "../../../libs/Libg";
 import {Configuration} from "../../../gene/Configuration";
-import {Armceptor} from "../../../utils/Armceptor";
-import {GameStateManager} from "../../../laser/client/state/GameStateManager";
-import {LogicDefines} from "../../../LogicDefines";
 
 const TeamManager_resolveStatus = new NativeFunction(  // "Changed non-team status: %i, slot: %i"
-    Libg.offset(0x4FDE4C, 0xDF18C), 'int', []
+    Libg.offset(0x5AC4BC, 0x0), 'int', []
 );
 
-const TeamManager_isPlayerReady = new NativeFunction( // func after TeamManager::instance
-    Libg.offset(0x4FD63C, 0xDE9F4), 'int', ['pointer']
+const TeamManager_isPlayerReady = new NativeFunction( // func after TeamManager::instance (???? doesn't make sense wtf)
+    Libg.offset(0x0, 0x0), 'int', ['pointer']
 );
 
 const TeamManager_checkIsReadyAndPrint = new NativeFunction( // TODO
-    Libg.offset(0x7CCCD4, 0x337FA8), 'void', ['pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer']
 );                  // maybe ^ (it was rewritten as i can say)
 
 const TeamManager_openTeamChat = new NativeFunction(
-    Libg.offset(0x7978D4, 0x3112A0), 'void', [] // "NEW_TEAM_CHAT"
+    Libg.offset(0x0, 0x0), 'void', [] // "NEW_TEAM_CHAT"
 );
 // 4FD790
-const TeamManager_instance = Libg.offset(0x103D9A8, 0xEE6200); // 1st dword after "HomePageTeamMember::onSpeechBubblePressed() missing chat entry"
-
-const TeamManager_onTeamStream_JUMPOUTFROM = Libg.offset(0x4FF0D0, -1); // "Got team stream message %i"
-const TeamManager_onTeamStream_JUMPOUTTO = Libg.offset(0x4FF0EC, -1); // "Got team stream message %i"
-
-const TeamManager_patch1 = Libg.offset(0x798784, -1);  // if (v9 === 1) (asm: CMP W8, #1)
-const TeamManager_patch2 = Libg.offset(0x79BDD0, -1); // if (v5 == 5) (asm: CMP W22, #5) ("TeamChatPinned")
-
+const TeamManager_instance = Libg.offset(0x115DC50, 0x0); // 1st dword after "HomePageTeamMember::onSpeechBubblePressed() missing chat entry"
 
 export class TeamManager {
     static getInstance() {
@@ -53,30 +43,6 @@ export class TeamManager {
         Interceptor.replace(TeamManager_checkIsReadyAndPrint, new NativeCallback(function (teamManager) {
             return 0;
         }, 'void', ['pointer']));
-
-        if (!LogicDefines.isPlatformIOS()) {
-            Armceptor.jumpout(TeamManager_onTeamStream_JUMPOUTFROM, TeamManager_onTeamStream_JUMPOUTTO);
-
-            Interceptor.attach(TeamManager_patch1, function () {
-                const check = (this.context as Arm64CpuContext);
-
-                if (check.x8.equals(1) && !GameStateManager.isHomeMode()) {
-                    (this.context as Arm64CpuContext).x8 = NULL;
-                }
-            });
-            if (LogicDefines.isPlatformIOS()) {
-                Interceptor.attach(TeamManager_patch2, function () {
-                    const check = (this.context as Arm64CpuContext);
-
-                    if (check.x22.equals(5) && !GameStateManager.isHomeMode()) {
-                        (this.context as Arm64CpuContext).x22 = NULL;
-                    }
-                });
-            }
-        }
-        else {
-            console.warn("Memory.patchCode will not work on iOS!!! Find another way to patch this. да мне похуй бля");
-        }
     }
 
     static openTeamChat() {

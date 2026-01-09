@@ -4,7 +4,7 @@ import {LogicDefines} from "../../LogicDefines";
 import ObjC from "frida-objc-bridge";
 
 const Application_copyString = new NativeFunction( // TID_DEVICE_LINK_CODE_COPIED
-    Libg.offset(0xC005F8, 0xB9B7D0), 'void', ['pointer']
+    Libg.offset(0xB8F51C, 0x0), 'void', ['pointer']
 );
 
 export class Application {

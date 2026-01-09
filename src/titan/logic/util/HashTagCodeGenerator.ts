@@ -2,7 +2,7 @@ import {Libg} from "../../../libs/Libg";
 import {Configuration} from "../../../gene/Configuration";
 
 const HashTagCodeGenerator_toCode = new NativeFunction( // "TID_SETTINGS_PLAYER_ID"
-    Libg.offset(0xA07234, 0x4DA6F4), 'pointer', ['pointer', 'pointer']
+    Libg.offset(0xDACD50, 0x0), 'pointer', ['pointer', 'pointer']
 );
 
 export class HashTagCodeGenerator {

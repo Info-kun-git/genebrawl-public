@@ -5,30 +5,25 @@ import {CSVRow} from "../../titan/logic/csv/CSVRow";
 import {StringTable} from "./StringTable";
 
 const globalIdOffset = 32;
-const outlineShaderOffset = 120; // "OutlineShader"
 const LogicCharacterData_soundOffsetStart = 256;
 const LogicSkinConfDataData_soundOffsetStart = 600;
 
-const LogicData_getTID = Libg.offset(0x89D5E8, 0x3E1EF8); // "<HERO>"
+const LogicData_getTID = Libg.offset(0xC34B38, 0x3E4718); // "<HERO>"
 
 const LogicSkillData_getAutoAttackType = new NativeFunction( // "AutoAttackType"
-    Libg.offset(0x8E6838, 0x415284), 'int', ['pointer']
+    Libg.offset(0x0, 0x0), 'int', ['pointer']
 );
 
 const LogicCharacterData_createReferences = new NativeFunction( // "Character has invalid type!"
-    Libg.offset(0x889608, 0x3D37B8), 'void', ['pointer']
+    Libg.offset(0xC27B50, 0x0), 'void', ['pointer']
 );
 
 const LogicSkinConfData_createReferences = new NativeFunction( // "TransformWhenOvercharged" (resetStatics) then its xref
-    Libg.offset(0x8E9D88, 0x417690), 'void', ['pointer']
-);
-
-const LogicSkinData_createReferences = new NativeFunction( // "OutlineShader"
-    Libg.offset(-1, -1), 'void', ['pointer']
+    Libg.offset(0xC89FF0, 0x0), 'void', ['pointer']
 );
 
 const EmoteIcon_playAnim = new NativeFunction( // "emote_in_use_ph"
-    Libg.offset(0x707708, 0x295D28), 'void', ['pointer', 'int', 'bool', 'float']
+    Libg.offset(0x7E0CA4, 0x0), 'void', ['pointer', 'int', 'bool', 'float']
 );
 
 export class LogicData {
@@ -135,10 +130,6 @@ export class LogicData {
         return StringTable.getString(this.getTID(logicData));
     }
 
-    public getDataByOffset(offset: number) {
-        return new LogicData(this.instance.add(offset).readPointer());
-    }
-
     readVector(vectorPtr: NativePointer): NativePointer[] {
         const dataPtr = vectorPtr.readPointer();
         const size = vectorPtr.add(12).readU32();
@@ -151,13 +142,5 @@ export class LogicData {
         }
 
         return elements;
-    }
-
-    public getDataFromArrayByOffset(offset: number) {
-        let ret: LogicData[] = [];
-        this.readVector(this.instance.add(offset)).forEach(function (data) {
-            ret.push(new LogicData(data));
-        });
-        return ret;
     }
 }

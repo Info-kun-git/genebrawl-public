@@ -8,7 +8,7 @@ const setTextVtableOffset = 53 * Process.pointerSize;
 
 // function offsets
 const GameButton_GameButton = new NativeFunction( // "GameButton::createButton: cannot find child by name: ", function after malloc
-    Libg.offset(0x4BFDD0, 0xA95D8), 'void', ['pointer']
+    Libg.offset(0x56A8B0, 0x0), 'void', ['pointer']
 );
 
 const movieClipOffset = 96;

@@ -3,7 +3,7 @@ import {Libg} from "../../libs/Libg";
 import {HashTagCodeGenerator} from "../../titan/logic/util/HashTagCodeGenerator";
 
 const BattleLogPlayerEntry_ctor = new NativeFunction( // 15081 decode | 23458 decode -> BattleLogEntry -> BattleLogPlayerEntry
-    Libg.offset(0x97C2B4, 0x486BDC), 'void', ['pointer', 'pointer']
+    Libg.offset(0xD24CA0, 0x0), 'void', ['pointer', 'pointer']
 );
 
 const BattleLogPlayerEntry_playerIdOffset = 8;

@@ -3,11 +3,11 @@ import {Libg} from "../../../libs/Libg";
 import {HashTagCodeGenerator} from "../../../titan/logic/util/HashTagCodeGenerator";
 
 const TeamMemberEntry_decode = new NativeFunction(
-    Libg.offset(0x972E84, 0x47FB0C), 'void', ['pointer', 'pointer'] // 24124
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer'] // 24124
 );
 
 const TeamMemberItem_setMember = new NativeFunction( // "button_slot_switch"
-    Libg.offset(0x651C8C, 0x1FF388), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']
 );
 
 const TeamMemberEntry_memberIdOffset = 8;

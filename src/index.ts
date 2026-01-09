@@ -34,7 +34,6 @@ import {FriendEntry} from "./logic/home/FriendEntry";
 import {LogicPlayer} from "./logic/battle/LogicPlayer";
 import {TeamMemberEntry} from "./logic/home/team/TeamMemberEntry";
 import {BattleEndPopup} from "./logic/battle/BattleEndPopup";
-import {SkinChanger} from "./gene/features/SkinChanger";
 import {TeamEntry} from "./logic/home/team/TeamEntry";
 import {LogicDataTables} from "./logic/data/LogicDataTables";
 import {Application} from "./titan/utils/Application";
@@ -49,11 +48,7 @@ import {TeamManager} from "./logic/home/team/TeamManager";
 import {ContextMenu} from "./titan/flash/gui/ContextMenu";
 import {GeneAssets} from "./gene/GeneAssets";
 import {GUI} from "./titan/flash/gui/GUI";
-import {DataIcon} from "./titan/flash/DataIcon";
-import {PromonBreaker} from "./gene/PromonBreaker";
 import {GradientNickname} from "./gene/features/GradientNickname";
-import {LogicBattleModeClient} from "./logic/battle/LogicBattleModeClient";
-import {Spoofer} from "./utils/Spoofer";
 
 // global stuff
 declare global {
@@ -147,10 +142,6 @@ function setupAvatarHooks() {
 function setupHomeHooks() {
     LogicClientHome.patch();
     HomeMode.patch();
-
-    if (Configuration.skinChanger)
-        SkinChanger.patch();
-
     PlayerProfile.patch();
     FriendEntry.patch();
     PlayerInfo.patch();
@@ -160,7 +151,6 @@ function setupHomeHooks() {
 
 function setupAllianceHooks() {
     ChatCommandHandler.patch();
-    AllianceManager.patch();
     AllianceInfo.patch();
     AllianceHeaderEntry.patch();
     AllianceMemberEntry.patch();
@@ -190,7 +180,6 @@ function setupBattleHooks() {
     CombatHUD.patch();
 
     MapEditorModifierPopup.patch();
-    DataIcon.patch()
 
     BattleEndPopup.patch();
     BattleLogPlayerEntry.patch();
@@ -198,7 +187,6 @@ function setupBattleHooks() {
     Character.patch()
 
     LogicCharacterData.patch();
-    LogicBattleModeClient.patch();
 }
 
 function setupTeamHooks() {
@@ -206,12 +194,6 @@ function setupTeamHooks() {
     TeamEntry.patch();
     TeamManager.patch();
     ContextMenu.patch();
-}
-
-function testStuff() {
-    /// #if DEBUG
-    // there's nothing for u :D
-    /// #endif
 }
 
 function initErrorHandler() {
@@ -245,9 +227,6 @@ rpc.exports.init = function (stage, parameters) {
 
         if (LogicDefines.isPlatformIOS()) {
             LogicVersion.iosVersion = PackageInfo.getValue("GENE_BRAWL_IOS_VERSION") ?? 0;
-
-            PromonBreaker.patch();
-            Spoofer.patch();
         }
 
         printInfo();
@@ -264,9 +243,6 @@ rpc.exports.init = function (stage, parameters) {
         setupTeamHooks();
 
         UsefulInfo.sessionStartedTime = Date.now();
-
-        if (LogicVersion.isDeveloperBuild())
-            testStuff();
 
     } catch (e: any) {
         console.log(e.stack);

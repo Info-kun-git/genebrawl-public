@@ -1,6 +1,6 @@
 import {Libg} from "../../libs/Libg";
 
-const Stage_instance = Libg.offset(0x1042990, 0xF26008);
+const Stage_instance = Libg.offset(0x1160FD8, 0x0);
 
 // Check for offsets in Stage::init (you can find it in GameMain::init by https://service.supercell.net/t?app=laser)
 

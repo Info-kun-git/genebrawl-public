@@ -10,7 +10,7 @@ import {Application} from "../../titan/utils/Application";
 import {AllianceFullEntry} from "./AllianceFullEntry";
 
 const AllianceInfo_setData = new NativeFunction(
-    Libg.offset(0x4DBF68, 0xC1B54), 'void', ['pointer', 'pointer'] // "TID_CLAN_INFO_NO_DESCRIPTION"
+    Libg.offset(0x58ABB8, 0x0), 'void', ['pointer', 'pointer'] // "TID_CLAN_INFO_NO_DESCRIPTION"
 );
 
 export class AllianceInfo {

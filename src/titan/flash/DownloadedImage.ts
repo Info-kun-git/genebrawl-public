@@ -6,11 +6,11 @@ import {MovieClip} from "./MovieClip";
 import {Sprite} from "./Sprite";
 
 const DownloadedImage_DownloadedImage = new NativeFunction(
-    Libg.offset(0x4B6E94, 0xA4344), 'void', [ 'pointer', 'pointer', 'pointer', 'bool', 'int', 'int', 'int' ] // "DownloadedImage from Chronos must have a folder type"
+    Libg.offset(0x5610D0, 0xA1C84), 'void', [ 'pointer', 'pointer', 'pointer', 'bool', 'int', 'int', 'int' ] // "DownloadedImage from Chronos must have a folder type"
 )
 
 const DownloadedImage_createFromLocalFile = new NativeFunction( // in DownloadedImage ctor, return function in if ( v18 >= 0xFFFFFFFFFFFFFFF0LL ) check
-    Libg.offset(0x4B71FC, 0xA4248), 'void', [ 'pointer', 'pointer', 'pointer' ]
+    Libg.offset(0x0, 0x0), 'void', [ 'pointer', 'pointer', 'pointer' ]
 ) 
 
 export class DownloadedImage extends Sprite { // Please load image перед использованием этого говна

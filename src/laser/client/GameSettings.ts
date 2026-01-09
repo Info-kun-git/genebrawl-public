@@ -1,7 +1,7 @@
 import {Libg} from "../../libs/Libg";
 
 // Static instances
-const GameSettings_instance = Libg.offset(0x0, 0xEE6708);
+const GameSettings_instance = Libg.offset(0x0, 0x0);
 
 // Fields
 const isSfxEnabledOffset = 8;
@@ -12,15 +12,15 @@ const isHapticsEnabledOffset = 16;
 // InitFunc "HapticsDisabled"
 
 const GameSettings_enableSfx = new NativeFunction( // TODO
-    Libg.offset(-1, 0x35B8F0), 'void', ['pointer', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'int']
 );
 
 const GameSettings_enableMusic = new NativeFunction(
-    Libg.offset(-1, 0x35B7E8), 'void', ['pointer', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'int']
 );
 
 const GameSettings_enableHaptics = new NativeFunction(
-    Libg.offset(0x7F34B8, 0x35B96C), 'void', ['pointer', 'int'] // "haptics_toggle"
+    Libg.offset(0x8DB1A4, 0x0), 'void', ['pointer', 'int'] // "haptics_toggle"
 );
 
 export class GameSettings {

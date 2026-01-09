@@ -7,7 +7,7 @@ import {LocalizationManager} from "../localization/index";
 import {TeamChatMessage_encode} from "./TeamSpam";
 
 const ChatToAllianceStreamMessage_encode = new NativeFunction( // 14315 below ctor
-    Libg.offset(0x0, 0x4819F0), 'void', ['pointer']
+    Libg.offset(0xD1E304, 0x0), 'void', ['pointer']
 );
 
 const messageOffset = 144;

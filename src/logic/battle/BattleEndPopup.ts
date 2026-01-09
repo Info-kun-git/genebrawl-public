@@ -1,25 +1,16 @@
 import {Libg} from "../../libs/Libg";
 import {Configuration} from "../../gene/Configuration";
 import {ContextMenu} from "../../titan/flash/gui/ContextMenu";
-import {LogicDefines} from "../../LogicDefines";
 
 const BattleEndPopup_proceedToNextState = new NativeFunction( // "goToState(%d) - already in same state" (should be in the start of func)
-    Libg.offset(0x544284, 0x10A578), 'void', ['pointer', 'int']
+    Libg.offset(0x5E9B54, 0x0), 'void', ['pointer', 'int']
 );
 
 const BattleEndPopup_goHome = new NativeFunction( // "Trying exit from battle end state %d, but not allowed"
-    Libg.offset(0x544284, 0x114F9C), 'void', ['pointer', 'bool']
+    Libg.offset(0x5E9B54, 0x0), 'void', ['pointer', 'bool']
 );
 
-const BattleEndPopup_kudosPatch1 = new NativeFunction( // is kudos given to any player
-    Libg.offset(0x0, -1), 'int', ['pointer', 'int']
-);
-
-const BattleEndPopup_kudosPatch2 = new NativeFunction( // is player kudos'ed
-    Libg.offset(0x0, -1), 'bool', ['pointer', 'int', 'int']
-);
-
-const BattleEndPopup_BattleEndPopup = Libg.offset(0x0, 0x107C68); // "battle_end_top_left" (not sure)
+const BattleEndPopup_BattleEndPopup = Libg.offset(0x0, 0x0); // "battle_end_top_left" (not sure)
 
 export class BattleEndPopup {
     static patch() {
@@ -45,24 +36,5 @@ export class BattleEndPopup {
                 ContextMenu.shouldShowContextMenu = true;
             }
         });
-
-        Interceptor.attach(BattleEndPopup_goHome, {
-            onEnter() {
-                if (LogicDefines.isPlatformAndroid()) {
-                    Libg.offset(0xFC29C4, -1).writeU8(0);
-                }
-            }
-        });
-
-        return;
-        if (LogicDefines.isPlatformIOS()) {
-            Interceptor.replace(BattleEndPopup_kudosPatch1, new NativeCallback(function (a1, a2) {
-                return 0;
-            }, 'int', ['pointer', 'int']));
-
-            Interceptor.replace(BattleEndPopup_kudosPatch2, new NativeCallback(function (a1, a2, a3) {
-                return 0;
-            }, 'bool', ['pointer', 'int', 'int']));
-        }
     }
 }

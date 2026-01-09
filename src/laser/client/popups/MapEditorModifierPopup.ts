@@ -1,11 +1,11 @@
 import {Libg} from "../../../libs/Libg";
 
 const MapEditorModifierPopup_ctor = new NativeFunction( // "popup_editor_modifier"
-    Libg.offset(0x5E5AEC, 0x1A2A7C), 'pointer', ['pointer']
+    Libg.offset(0x6A2C00, 0x0), 'pointer', ['pointer']
 );
 
 const MapEditorModifierPopup_addModifierItem = new NativeFunction( // in ctor
-    Libg.offset(0x5E638C, 0x1A31A4), 'void', ['pointer', 'int']
+    Libg.offset(0x6A35A0, 0x0), 'void', ['pointer', 'int']
 );
 
 const modifiers: number[] = [

@@ -8,7 +8,7 @@ const xOffset = 8;
 const yOffset = 12;
 
 const ClientInput_ctor = new NativeFunction( // "scid_button_tutorial", find function with 2nd arg is 12
-    Libg.offset(0x985690, 0x48D210), 'void', ['pointer', 'int']
+    Libg.offset(0xD2D5E4, 0x491354), 'void', ['pointer', 'int']
 );
 
 export class ClientInput {

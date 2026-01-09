@@ -4,19 +4,19 @@ import {MovieClip} from "../MovieClip";
 import {DropGUIContainer} from "./DropGUIContainer";
 
 const GameSliderComponent_GameSliderComponent = new NativeFunction( // "SliderTick"
-    Libg.offset(0x4C3580, 0xAC724), 'pointer', ['pointer', 'pointer', 'pointer', 'pointer', 'bool']
+    Libg.offset(0x56EE54, 0x0), 'pointer', ['pointer', 'pointer', 'pointer', 'pointer', 'bool']
 );
 
 const GameSliderComponent_setValueBounds = new NativeFunction( // xref from GameSliderComponent ctor, function with args v*, 3, 60
-    Libg.offset(0x4C3D34, 0xACE48), 'void', ['pointer', 'int', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'int', 'int']
 );
 
 const GameSliderComponent_setMaxValueLabel = new NativeFunction( // xref from GameSliderComponent ctor, function with "60+" arg
-    Libg.offset(0x4C3D3C, 0xACE50), 'void', ['pointer', 'pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer']
 );
 
 const GameSliderComponent_update = new NativeFunction( // GameSliderComponent vtable, 2nd from end.
-    Libg.offset(0x4C3BCC, 0xACCC4), 'void', ['pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer']
 );
 
 const currentValueOffset = 192;

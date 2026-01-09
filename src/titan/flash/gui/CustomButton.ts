@@ -1,11 +1,6 @@
-import {Libg} from "../../../libs/Libg";
 import {MovieClip} from "../MovieClip";
 import {Sprite} from "../Sprite";
 import {IButtonListener} from "./IButtonListener";
-
-const CustomButton_setEnabled = new NativeFunction(
-    Libg.offset(0xA81268, 0x9DAD20), 'void', ['pointer', 'bool']
-);
 
 const setMovieClipVtableOffset = 45 * Process.pointerSize;
 const buttonListenerOffset = 168;
@@ -15,10 +10,6 @@ export class CustomButton extends Sprite {
 
     constructor(instance: NativePointer) {
         super(instance);
-    }
-
-    setEnabled(state: boolean) {
-        CustomButton_setEnabled(this.instance, Number(state));
     }
 
     setMovieClip(movieClip: MovieClip | NativePointer): void {

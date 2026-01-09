@@ -2,15 +2,15 @@ import {Libg} from "../../libs/Libg";
 import {TextField} from "./TextField";
 
 const MovieClipHelper_autoAdjustChildTexts = new NativeFunction( // "TID_SETTINGS_BUTTON_WECHAT_LOGIN", then function lower with 4 args 
-    Libg.offset(0x829658, 0x388E04), 'void', [ 'pointer', 'bool', 'bool', 'bool' ]
+    Libg.offset(0x928988, 0x0), 'void', [ 'pointer', 'bool', 'bool', 'bool' ]
 );
 
 const MovieClipHelper_autoAdjustText = new NativeFunction( // In MovieClipHelper::autoAdjustChildTexts, first function in loop.
-    Libg.offset(0x829588, 0x388D7C), 'void', ['pointer', 'bool', 'bool', 'bool']
+    Libg.offset(0x927B1C, 0x0), 'void', ['pointer', 'bool', 'bool', 'bool']
 );
 
 const MovieClipHelper_setTextAndScaleIfNecessary = new NativeFunction( // under "TID_BATTLE_END_WAITING"
-    Libg.offset(0x828D08, 0x388504), 'void', [ 'pointer', 'pointer', 'bool', 'bool' ]
+    Libg.offset(0x927CFC, 0x0), 'void', [ 'pointer', 'pointer', 'bool', 'bool' ]
 );
 
 export class MovieClipHelper {

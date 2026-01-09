@@ -1,6 +1,5 @@
 import {DebugBattleButton} from "./debug/DebugBattleButton";
 import {Sprite} from "../titan/flash/Sprite";
-import {LogicVersion} from "../logic/LogicVersion";
 import {Configuration} from "./Configuration";
 
 export class BattleDebug {

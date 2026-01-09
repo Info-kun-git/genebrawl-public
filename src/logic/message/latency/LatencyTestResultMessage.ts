@@ -6,7 +6,7 @@ const regionIdOffset = 144;
 const pingOffset = 148;
 
 const LatencyTestResultMessage_encode = new NativeFunction( // 39001
-    Libg.offset(0xA9CEC8, 0x9F7A24), 'void', ['pointer']
+    Libg.offset(0x9BF480, 0x0), 'void', ['pointer']
 );
 
 export class LatencyTestResultMessage extends PiranhaMessage {

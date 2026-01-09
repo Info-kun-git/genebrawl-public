@@ -4,7 +4,7 @@ import {Libg} from "../../libs/Libg";
 const maxTestsOffset = 4;
 
 const LatencyTestConfiguration_decode = new NativeFunction( // in decode 49001 (StartLatencyTestRequestMessage)
-    Libg.offset(0xA9CAF4, 0x9F7674), 'void', ['pointer', 'pointer']
+    Libg.offset(0x9BF0A8, 0x0), 'void', ['pointer', 'pointer']
 ); 
 
 export class LatencyTestConfiguration {

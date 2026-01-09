@@ -1,7 +1,7 @@
 import {Libg} from "../../libs/Libg";
 
 const FramerateManager_setSegment = new NativeFunction( // "Battle scope"
-    Libg.offset(0xC33BE8, 0xBA3D3C), 'void', ['pointer', 'int']
+    Libg.offset(0xB32968, 0xB82B00), 'void', ['pointer', 'int']
 ); 
 
 export class FramerateManager {

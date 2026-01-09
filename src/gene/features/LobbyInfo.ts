@@ -1,6 +1,5 @@
 import {MovieClip} from "../../titan/flash/MovieClip";
 import {LogicVersion} from "../../logic/LogicVersion";
-import {Configuration} from "../Configuration";
 import {LatencyManager} from "../../laser/client/network/LatencyManager";
 import {ResourceManager} from "../../titan/ResourceManager";
 import {Resources} from "../Resources";
@@ -20,7 +19,7 @@ export class LobbyInfo extends MovieClip {
 
         this.textField = mainMovieClip.getTextFieldByName("Text");
         if (!this.textField) {
-            console.error("DebugHud::DebugHud", "TextField is NULL!");
+            console.error("LobbyInfo", "TextField is NULL!");
         }
 
         // TODO: просчитывать корды

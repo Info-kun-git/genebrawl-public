@@ -10,23 +10,15 @@ const allocSize = 250;
 const movieClipOffset = 112;
 
 const GUIContainer_ctor = new NativeFunction( // "buttons_yoozoo" (DropGUIContainer ctor)
-    Libg.offset(0x4C0928, 0xAA0D4), 'void', ['pointer', 'pointer']
+    Libg.offset(0x56BCD0, 0x0), 'void', ['pointer', 'pointer']
 );
 
 const GUIContainer_setText = new NativeFunction( // "TID_CONFIRM_GEAR_DIRECT_PURCHASE_TITLE"
-    Libg.offset(0xA81EBC, 0x9DB94C), 'void', ['pointer', 'pointer', 'pointer']
-);
-
-const GUIContainer_setMovieClip = new NativeFunction(
-    Libg.offset(0xA81B58, 0x9DB624), 'void', ['pointer', 'pointer'] // in GUIContainer_ctor 3rd line from bottom
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer', 'pointer']
 );
 
 const DropGUIContainer_addGameButton = new NativeFunction( // "bcheck"
-    Libg.offset(0x4C0BC8, 0xAA3D4), 'pointer', ['pointer', 'pointer', 'bool']
-);
-
-const GUIContainer_getMovieClipByName = new NativeFunction(
-    Libg.offset(0xA4F1A8, 0x9AC57C), 'pointer', ['pointer', 'pointer']
+    Libg.offset(0x56C4C8, 0x0), 'pointer', ['pointer', 'pointer', 'bool']
 );
 
 export class DropGUIContainer extends Sprite {
@@ -79,16 +71,6 @@ export class DropGUIContainer extends Sprite {
 
     setText(field: string, txt: string) {
         GUIContainer_setText(this.instance, field.ptr(), txt.scptr());
-    }
-
-    setMovieClip(movieClip: MovieClip) {
-        GUIContainer_setMovieClip(this.instance, movieClip.instance);
-    }
-
-    getMovieClipByName(name: string) {
-        return new MovieClip(
-            GUIContainer_getMovieClipByName(this.instance, name.ptr())
-        );
     }
 
     addGameButton(name: string, bool: boolean) {

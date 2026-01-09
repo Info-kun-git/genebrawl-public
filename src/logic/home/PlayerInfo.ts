@@ -12,11 +12,11 @@ import {HashTagCodeGenerator} from "../../titan/logic/util/HashTagCodeGenerator"
 import {Application} from "../../titan/utils/Application";
 
 const PlayerInfo_PlayerInfo = new NativeFunction(
-    Libg.offset(0x4F306C, 0xD4C80), 'pointer', ['pointer', 'pointer', 'int', 'pointer', 'int'] // "other_players_profile"
+    Libg.offset(0x5A1484, 0x0), 'pointer', ['pointer', 'pointer', 'int', 'pointer', 'int'] // "other_players_profile"
 );
 
 const PlayerInfo_refreshPlayerHeader = new NativeFunction( // "tag_txt"
-    Libg.offset(0x4F754C, 0xD8B7C), 'void', ['pointer']
+    Libg.offset(0x5A5A9C, 0x0), 'void', ['pointer']
 );
 
 const guiContainerOffset = 192;

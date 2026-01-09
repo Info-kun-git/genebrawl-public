@@ -6,7 +6,7 @@ import {LocalizationManager} from "../../gene/localization/index";
 
 
 export const TeamChatMessage_encode = new NativeFunction( // 14049 below ctor
-    Libg.offset(0x970C64, 0x47DFB8), 'void', ['pointer']
+    Libg.offset(0xD19BDC, 0x48210C), 'void', ['pointer']
 );
 
 export class TeamSpam {

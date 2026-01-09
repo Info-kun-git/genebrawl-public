@@ -17,29 +17,29 @@ const gameStateOffset = LogicDefines.isPlatformAndroid() ? 424 : 408;
 const homeSpriteOffset = LogicDefines.isPlatformAndroid() ? 296 : 288;
 
 // Function offsets
-const GameMain_instance = Libg.offset(0x103AB80, 0xEE5B20); // MMWarned_  in GameMain::getInstance
+const GameMain_instance = Libg.offset(0x115AD00, 0xEC2270); // MMWarned_  in GameMain::getInstance
 
 const GameMain_setAccountTier = new NativeFunction( // "LoginFailed due to data version but not in InitState!"
-    Libg.offset(0x3F3794, 0xB78C), 'void', ['pointer', 'int']
+    Libg.offset(0x491F8C, 0x0), 'void', ['pointer', 'int']
 );
 
-const GameMain_showNativeDialog = Libg.offset(0x0, 0x9418); // "TID_ERROR_POP_UP_SERVER_MAINTENANCE_ESTIMATED_MINUTES"
+const GameMain_showNativeDialog = Libg.offset(0x48F774, 0x74CC); // "TID_ERROR_POP_UP_SERVER_MAINTENANCE_ESTIMATED_MINUTES"
 
 const GameMain_reloadGameInternal = new NativeFunction(
-    Libg.offset(0x3F0A64, 0x8DEC), 'void', ['pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer']
 );
 
 // Native functions
 const GameMain_setSlowMode = new NativeFunction( // higher than "after_trophies" first sub_xxx(0LL);
-    Libg.offset(0x3F393C, 0xB914), 'void', ['bool']
+    Libg.offset(0x492134, 0x0), 'void', ['bool']
 );
 
 const GameMain_loadAsset = new NativeFunction( // "sfx/supercell_jingle.ogg", func below with int 0 in 2nd arg
-    Libg.offset(0x3F2D3C, 0xAFC8), 'void', ['pointer', 'bool']
+    Libg.offset(0x4914F8, 0x907C), 'void', ['pointer', 'bool']
 );
 
 const GameMain_draw = new NativeFunction( // vtable index 5 (5 * POINTER_SIZE) [then why tf we don't just get it from vtable???]
-    Libg.offset(0x3F1E98, 0xA258), 'void', ['pointer', 'float']
+    Libg.offset(0x490600, 0x6B68), 'void', ['pointer', 'float']
 );
 
 export class GameMain {

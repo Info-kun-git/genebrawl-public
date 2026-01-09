@@ -8,17 +8,14 @@ import {GlobalID} from "../data/GlobalID";
 import {LogicCharacterData} from "../data/LogicCharacterData";
 
 const LogicPlayer_decode = new NativeFunction( // 20559 decode
-    Libg.offset(0x9EAB50, 0x4CA608), 'void', ['pointer', 'pointer']
+    Libg.offset(0xD8B048, 0x4CD764), 'void', ['pointer', 'pointer']
 );
 
 export const battleCard_titleOffset = 40;
 export const battleCard = 440;
 
-const LogicPlayer_PlayerDisplayDataOffset = 448;
-const logicAccessoryOffset = 280;
 const playerIndexOffset = 8;
 const teamIndexOffset = 12;
-const characterGlobalIdOffset = 16;
 const heroesOffset = 48;
 const heroesCountOffset = 60;
 
@@ -83,18 +80,6 @@ export class LogicPlayer {
 
     getPlayerIndex(): number {
         return LogicPlayer.getPlayerIndex(this.instance);
-    }
-
-    getCharacterGlobalId(): number {
-        return LogicPlayer.getCharacterGlobalId(this.instance);
-    }
-
-    getTitle() {
-        return LogicPlayer.getTitle(this.instance);
-    }
-
-    setTitle(dataRef: NativePointer) {
-        LogicPlayer.setTitle(this.instance, dataRef);
     }
 
     setName(name: string) {
@@ -168,10 +153,6 @@ export class LogicPlayer {
         return this.getName(logicPlayer).length == 1;
     }
 
-    static getCharacterGlobalId(logicPlayer: NativePointer): number {
-        return logicPlayer.add(characterGlobalIdOffset).readInt();
-    }
-
     static getHashTag(logicPlayer: NativePointer) {
         return LogicPlayer.isBot(logicPlayer) ? "0" : HashTagCodeGenerator.toCode(logicPlayer);
     }
@@ -190,10 +171,6 @@ export class LogicPlayer {
 
     static getPlayerDisplayData(logicPlayer: NativePointer): NativePointer {
         return logicPlayer.add(battleCard).readPointer().readPointer();
-    }
-
-    static getTitle(logicPlayer: NativePointer): NativePointer {
-        return logicPlayer.add(battleCard).readPointer().add(battleCard_titleOffset).readPointer();
     }
 
     static setTitle(logicPlayer: NativePointer, title: NativePointer) {
@@ -215,13 +192,5 @@ export class LogicPlayer {
 
     static getPlayerIndex(playerPtr: NativePointer) {
         return playerPtr.add(playerIndexOffset).readInt();
-    }
-
-    getAccessory() {
-        return this.instance.add(logicAccessoryOffset).readPointer();
-    }
-
-    static getAccessory(playerPtr: NativePointer) {
-        return playerPtr.add(logicAccessoryOffset).readPointer();
     }
 }

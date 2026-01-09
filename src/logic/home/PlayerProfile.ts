@@ -7,7 +7,7 @@ import {LogicPlayerTitleData} from "../data/LogicPlayerTitleData";
 import {LogicData} from "../data/LogicData";
 
 const PlayerProfile_decode = new NativeFunction(
-    Libg.offset(0x9A5018, 0x49FD40), 'void', ['pointer', 'pointer'] // 24113
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer'] // 24113
 );
 
 const PlayerProfile_PlayerDisplayDataOffset = 48;

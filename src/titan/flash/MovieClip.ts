@@ -3,47 +3,43 @@ import {Libg} from "../../libs/Libg";
 import {TextField} from "./TextField";
 
 const MovieClip_getChildByName = new NativeFunction( // "tap_area" (char const)
-    Libg.offset(0xA4D884, 0x9AADC8), 'pointer', ['pointer', 'pointer']
+    Libg.offset(0x971FCC, 0x0), 'pointer', ['pointer', 'pointer']
 );
 
 const MovieClip_getTextFieldByName = new NativeFunction( // "TID_LINK_CODE_WARNING_TEXT"
-    Libg.offset(0xA4EEE8, 0x9AC2CC), 'pointer', ['pointer', 'pointer']
+    Libg.offset(0x973368, 0x0), 'pointer', ['pointer', 'pointer']
 );
 
 const MovieClip_setChildVisible = new NativeFunction( // "brawler_name_blue";
-    Libg.offset(0xA4F49C, 0x9AC848), 'void', ['pointer', 'pointer', 'bool']
+    Libg.offset(0x973900, 0x0), 'void', ['pointer', 'pointer', 'bool']
 );
 
 const MovieClip_setText = new NativeFunction( // "TID_CLAN_INTRO_CREATE_TITLE"
-    Libg.offset(0xA4F0F4, 0x9AC4CC), 'void', ['pointer', 'pointer', 'pointer']
+    Libg.offset(0x973574, 0x0), 'void', ['pointer', 'pointer', 'pointer']
 );
 
 const MovieClip_playOnce = new NativeFunction( // "not able to find free floater text slot"
-    Libg.offset(0xA4F528, 0x9AC8CC), 'void', ['pointer']
-);
-
-const MovieClip_stop = new NativeFunction( // "battle_end_replay_screen_"
-    Libg.offset(0xA4EBB4, 0x9AB9C0), 'void', ['pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer']
 );
 
 const MovieClip_setFrame = new NativeFunction( // inside ::playOnce
-    Libg.offset(0xA4BA54, 0x9A8FE0), 'void', ['pointer', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'int']
 );
 
 const MovieClip_getNameOfChild = new NativeFunction( // *rubbing hands* ": texts not yet loaded" (function MUST BE with string "TID_"), then xref, and function below is this shit.
-    Libg.offset(0x8129B8, 0x37732C), 'pointer', [ 'pointer', 'pointer', 'pointer' ]
+    Libg.offset(0x0, 0x0), 'pointer', [ 'pointer', 'pointer', 'pointer' ]
 )
 
 const MovieClip_getFrameIndex = new NativeFunction( // below "xp_%d_end"
-    Libg.offset(0xA4E194, 0x9AB628), 'int', [ 'pointer', 'pointer' ]
+    Libg.offset(0x0, 0x0), 'int', [ 'pointer', 'pointer' ]
 )
 
 const MovieClip_gotoAndStopFrameIndex = new NativeFunction( // func below "TID_DEVICE_LINK_CODE_BUTTON_LINK"
-    Libg.offset(0xA4DDFC, 0x9AB2F8), 'void', [ 'pointer', 'int' ]
+    Libg.offset(0x9724D4, 0x0), 'void', [ 'pointer', 'int' ]
 )
 
 const MovieClip_gotoAndPlayFrameIndex = new NativeFunction( // "TID_GATCHA_SCREEN_TAP", functions with 2 and 4 args - 0
-    Libg.offset(0xA4DD10, 0x9AB218), 'void', [ 'pointer', 'int', 'int', 'int' ]
+    Libg.offset(0x9723EC, 0x0), 'void', [ 'pointer', 'int', 'int', 'int' ]
 )
 
 // t.me/gene_land
@@ -115,10 +111,6 @@ export class MovieClip extends Sprite {
 
     playOnce() {
         MovieClip_playOnce(this.instance);
-    }
-
-    stop() {
-        MovieClip_stop(this.instance);
     }
 
     setFrame(index: number)  {

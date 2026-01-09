@@ -2,19 +2,15 @@ import {Libg} from "../../libs/Libg";
 import {DisplayObject} from "./DisplayObject";
 
 const Sprite_addChild = new NativeFunction( // "TID_SETTINGS_SCREEN_TITLE"
-    Libg.offset(0xA5FD8C, 0x9BCE38), 'void', ['pointer', 'pointer']
+    Libg.offset(0x9829D4, 0x9B7E20), 'void', ['pointer', 'pointer']
 );
 
 const Sprite_addChildAt = new NativeFunction( // inside Sprite::addChild
-    Libg.offset(0xA5FD94, 0x9BCE40), 'void', ['pointer', 'pointer', 'int']
+    Libg.offset(0x9829DC, 0x9B7E28), 'void', ['pointer', 'pointer', 'int']
 );
 
 const Sprite_removeChild = new NativeFunction( // "scroll_area_mask"
-    Libg.offset(0xA60098, 0x9BD0FC), 'void', ['pointer', 'pointer']
-);
-
-const Sprite_removeChildAt = new NativeFunction(
-    Libg.offset(0x0, 0x9BD140), 'void', ['pointer', 'int']
+    Libg.offset(0x982CAC, 0x9B80E4), 'void', ['pointer', 'pointer']
 );
 
 export class Sprite extends DisplayObject {
@@ -34,10 +30,6 @@ export class Sprite extends DisplayObject {
         Sprite_removeChild(this.instance, child instanceof NativePointer ? child : child.instance);
     }
 
-    removeChildAt(idx: number): void {
-        Sprite_removeChildAt(this.instance, idx);
-    }
-
     static addChild(instance: NativePointer, child: NativePointer | DisplayObject) {
         Sprite_addChild(instance, child instanceof NativePointer ? child : child.instance);
     }
@@ -48,9 +40,5 @@ export class Sprite extends DisplayObject {
 
     static removeChild(instance: NativePointer, child: NativePointer | DisplayObject) {
         Sprite_removeChild(instance, child instanceof NativePointer ? child : child.instance);
-    }
-
-    static removeChildAt(instance: NativePointer, child: NativePointer | DisplayObject, offset: number) {
-        Sprite_removeChildAt(instance, offset);
     }
 }

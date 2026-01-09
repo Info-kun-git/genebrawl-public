@@ -13,33 +13,25 @@ import {LogicDefines} from "../../LogicDefines";
 import {LogicBattleModeClient} from "./LogicBattleModeClient";
 import {Debug} from "../../gene/Debug";
 
-const CombatHUD_ultiButtonActivated = new NativeFunction( // check last method of handleAutoshoot
-    Libg.offset(0x4ABEF4, 0x9D1C0), 'void', ['pointer', 'bool']
-);
-
 const CombatHUD_prepareNewIntro = new NativeFunction( // "three_versus_boss"
-    Libg.offset(0x47EC94, 0x76D6C), 'void', ['pointer']
+    Libg.offset(0x5245F4, 0x0), 'void', ['pointer']
 );
 
 const CombatHUD_update = new NativeFunction( // "input lat"
-    Libg.offset(0x49A2C8, 0x8D398), 'void', ['pointer', 'float']
+    Libg.offset(0x542950, 0x0), 'void', ['pointer', 'float']
 );
 
 const CombatHUD_setupPlayerCard = new NativeFunction( // "frame_front_levels_ph" | "Must have pointer to player card to setup" end of that func (v121 = sub_10006FFFC(v13, a2, a3, a4, a5, a8, a6, a7);)
-    Libg.offset(0x482E20, 0x7A5E8), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'int', 'pointer', 'pointer', 'int', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'int', 'pointer', 'pointer', 'int', 'int']
 );
 
-// const CombatHUD_CombatHUD = new NativeFunction( // "laser_screen_mask"
-//     Libg.offset(0x0, 0x0), 'void', ['pointer']
-// )
-
 export const CombatHUD_shouldHaveSpectateFollowButton = new NativeFunction( // CombatHUD::CombatHUD NOTSURE
-    Libg.offset(0x4957CC, 0x89704), 'bool', []
+    Libg.offset(0x0, 0x0), 'bool', []
 );
 
 
 // not sure about it
-const CombatHUD_mirrorPlayfieldOffset = Libg.offset(0x0, 0xEE6188); // upper than "train_lamp_glow_right" if ( byte_10116... == v55)
+const CombatHUD_mirrorPlayfieldOffset = Libg.offset(0x115DB28, 0x0); // upper than "train_lamp_glow_right" if ( byte_10116... == v55)
 const CombatHUD_movieClip = 96;
 const CombatHUD_battleIntroOffset = 720;
 const BattleIntro_movieClipOffset = 328;
@@ -127,10 +119,6 @@ export class CombatHUD {
             console.log(alpha);
             DisplayObject.setAlpha(object, alpha);
         } catch (e) { }
-    }
-
-    static ultiButtonActivated(combatHUD: NativePointer, a2: boolean) {
-        CombatHUD_ultiButtonActivated(combatHUD, Number(a2));
     }
 
     static mirrorPlayfield() {

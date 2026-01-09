@@ -1,7 +1,7 @@
 import {Libg} from "../../../libs/Libg";
 
 const TextInput_setMaxTextLength = new NativeFunction( // in BandMailPopup::BandMailPopup after GameInputField::GameInputField ctor
-    Libg.offset(0xC39988, 0xBAC81C), 'void', ['pointer', 'int']
+    Libg.offset(0x0, 0x0), 'void', ['pointer', 'int']
 );
 
 export class TextInput {

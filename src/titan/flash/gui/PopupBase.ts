@@ -18,15 +18,11 @@ import {Sprite} from "../Sprite";
 import {DisplayObject} from "../DisplayObject";
 
 const PopupBase_PopupBase = new NativeFunction(
-    Libg.offset(0x5C2AD8, 0x1ACA44), 'pointer', ['pointer', 'pointer', 'pointer', 'bool', 'bool', 'pointer', 'pointer', 'pointer', 'pointer']
+    Libg.offset(0x6B191C, 0x0), 'pointer', ['pointer', 'pointer', 'pointer', 'bool', 'bool', 'pointer', 'pointer', 'pointer', 'pointer']
 );
 
 const PopupBase_setUpScreenHeader = new NativeFunction(
-    Libg.offset(0x5F2A28, 0x1ADA60), 'void', ['pointer'] // "button_home"
-);
-
-const PopupBase_addContent = new NativeFunction(
-    Libg.offset(0x5F2E94, 0x1ADD78), 'void', ['pointer', 'pointer']
+    Libg.offset(0x0, 0x0), 'void', ['pointer'] // "button_home"
 );
 
 const updateVtableOffset = 52 * Process.pointerSize;
@@ -99,23 +95,6 @@ export class PopupBase extends DropGUIContainer {
         return new MovieClip(
             background
         );
-    }
-
-    setBackgroundMovieClip(movieClip: MovieClip) {
-        this.bgMovieClip = movieClip;
-        this.instance.add(backgroundMovieClipOffset).writePointer(movieClip.instance);
-    }
-
-    addContent(content: DisplayObject) {
-        PopupBase_addContent(this.instance, content.instance);
-    }
-
-    getNaviHeight() {
-        return this.instance.add(naviHeightOffset).readFloat();
-    }
-
-    static setBackgroundMovieClip(instance: NativePointer, movieClip: MovieClip) {
-        instance.add(backgroundMovieClipOffset).writePointer(movieClip.instance);
     }
 
     static patch() {
