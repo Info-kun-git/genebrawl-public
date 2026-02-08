@@ -1,0 +1,154 @@
+name: Build Gene Brawl Mod
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Тип сборки'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - production
+      target_platform:
+        description: 'Целевая платформа'
+        required: true
+        default: 'gadget'
+        type: choice
+        options:
+          - gadget
+          - frida_mac
+          - ios_laser
+          - ios_laser_dev
+          - custom
+      custom_command:
+        description: 'Кастомная команда (только если выбрано custom)'
+        required: false
+        default: ''
+        type: string
+      node_version:
+        description: 'Версия Node.js'
+        required: true
+        default: '18'
+        type: choice
+        options:
+          - '16'
+          - '18'
+          - '20'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: 🌳 Show project tree
+        run: |
+          echo "=========================================="
+          echo "📁 Структура проекта:"
+          echo "=========================================="
+          tree -L 3 -I 'node_modules|dist|build' || find . -maxdepth 3 -not -path '*/node_modules/*' -not -path '*/dist/*' -not -path '*/build/*' | head -50
+          echo ""
+          echo "=========================================="
+          echo "📄 package.json скрипты:"
+          echo "=========================================="
+          cat package.json | grep -A 20 '"scripts"'
+          echo ""
+          echo "=========================================="
+          echo "🔧 Доступные команды:"
+          echo "=========================================="
+          echo "npm install          - Установка зависимостей"
+          echo "npm run build_dev    - DEBUG сборка"
+          echo "npm run build        - PRODUCTION сборка"
+          echo "npm run gadget       - DEBUG + Gadget mode"
+          echo "npm run gadget_prod  - PRODUCTION + Gadget mode"
+          echo "npm run frida_mac_dev- DEBUG + Mac/PlayCover"
+          echo "npm run ios_laser    - PRODUCTION + iDevice"
+          echo "npm run ios_laser_dev- DEBUG + iDevice"
+          echo "=========================================="
+      
+      - name: 🔧 Setup Node.js ${{ inputs.node_version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: 'npm'
+      
+      - name: 📦 Install dependencies
+        run: |
+          echo "⬇️ Установка зависимостей..."
+          npm install
+          echo "✅ Зависимости установлены"
+      
+      - name: 🏗️ Build project
+        run: |
+          echo "=========================================="
+          echo "🔨 Начинаю сборку..."
+          echo "Тип: ${{ inputs.build_type }}"
+          echo "Платформа: ${{ inputs.target_platform }}"
+          echo "=========================================="
+          
+          case "${{ inputs.target_platform }}" in
+            gadget)
+              if [ "${{ inputs.build_type }}" == "production" ]; then
+                echo "🚀 Запуск: npm run gadget_prod"
+                npm run gadget_prod
+              else
+                echo "🚀 Запуск: npm run gadget"
+                npm run gadget
+              fi
+              ;;
+            frida_mac)
+              echo "🚀 Запуск: npm run frida_mac_dev"
+              npm run frida_mac_dev
+              ;;
+            ios_laser)
+              echo "🚀 Запуск: npm run ios_laser"
+              npm run ios_laser
+              ;;
+            ios_laser_dev)
+              echo "🚀 Запуск: npm run ios_laser_dev"
+              npm run ios_laser_dev
+              ;;
+            custom)
+              echo "🚀 Запуск кастомной команды: ${{ inputs.custom_command }}"
+              ${{ inputs.custom_command }}
+              ;;
+          esac
+          
+          echo "✅ Сборка завершена!"
+      
+      - name: 📋 List build artifacts
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "📦 Созданные артефакты:"
+          echo "=========================================="
+          find . -name "*.js" -o -name "*.ts" -o -name "dist" -o -name "build" 2>/dev/null | head -20 || echo "Артефакты не найдены в текущей директории"
+          ls -la dist/ 2>/dev/null || ls -la build/ 2>/dev/null || echo "Папки dist/ или build/ не найдены"
+          echo "=========================================="
+      
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gene-brawl-build-${{ inputs.build_type }}-${{ inputs.target_platform }}
+          path: |
+            dist/
+            build/
+            *.js
+            !node_modules/
+          if-no-files-found: warn
+          retention-days: 30
+      
+      - name: 🎉 Success message
+        if: success()
+        run: |
+          echo "=========================================="
+          echo "✅ СБОРКА УСПЕШНО ЗАВЕРШЕНА!"
+          echo "=========================================="
+          echo "Тип: ${{ inputs.build_type }}"
+          echo "Платформа: ${{ inputs.target_platform }}"
+          echo "Артефакты сохранены и доступны для скачивания"
+          echo "=========================================="
