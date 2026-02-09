@@ -1,47 +1,103 @@
-name: Build Gene Brawl APK
+name: Build APK from Uploaded ZIP
 
 on:
   workflow_dispatch:
     inputs:
-      bundle_url:
-        description: 'URL к ZIP с bundle.js (или оставь пустым для загрузки артефакта)'
-        required: false
-        default: ''
-        type: string
       frida_version:
-        description: 'Версия Frida Gadget'
-        required: true
+        description: 'Версия Frida'
         default: '16.1.11'
         type: string
-      gadget_interaction:
-        description: 'Режим работы Gadget'
-        required: true
-        default: 'script'
-        type: choice
-        options:
-          - script (автозагрузка JS)
-          - listen (ждет подключения)
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: 🔧 Setup Java & Android SDK
-        uses: actions/setup-java@v4
+      - name: 📤 Upload your ZIP here first
+        uses: actions/upload-artifact@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          name: input-bundle
+          path: /tmp/upload
       
-      - name: 📦 Install dependencies
+      # ... остальное то же самое
+
+      - name: 📥 Setup & Download
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq wget unzip zip
           
-          # Android SDK
+          mkdir -p /tmp/work
+          
+          # Если указано имя артефакта - скачиваем через API
+          if [ -n "${{ inputs.artifact_name }}" ]; then
+            echo "📦 Ищем артефакт: ${{ inputs.artifact_name }}"
+            
+            # Получаем список всех артефактов
+            curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=100" \
+              > /tmp/artifacts.json
+            
+            # Ищем по имени
+            ARTIFACT_ID=$(cat /tmp/artifacts.json | jq -r ".artifacts[] | select(.name==\"${{ inputs.artifact_name }}\") | .id" | head -1)
+            
+            if [ -z "$ARTIFACT_ID" ]; then
+              echo "❌ Артефакт не найден. Доступные артефакты:"
+              cat /tmp/artifacts.json | jq -r '.artifacts[].name' | head -20
+              exit 1
+            fi
+            
+            echo "✅ Найден ID: $ARTIFACT_ID"
+            
+            # Скачиваем
+            curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -o /tmp/work/download.zip \
+              "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"
+            
+          else
+            echo "⚠️ Имя артефакта не указано"
+            echo "📤 Загрузи файл вручную через интерфейс или укажи имя артефакта"
+            exit 1
+          fi
+          
+          echo "✅ Файл скачан:"
+          ls -lh /tmp/work/download.zip
+      
+      - name: 📂 Extract bundle.js
+        run: |
+          cd /tmp/work
+          
+          # Распаковываем первый уровень (GitHub wrapper)
+          unzip -q download.zip
+          echo "После первой распаковки:"
+          ls -la
+          
+          # Ищем внутренний ZIP
+          INNER=$(find . -name "*.zip" | head -1)
+          if [ -n "$INNER" ]; then
+            echo "📂 Распаковываем: $INNER"
+            unzip -q "$INNER" -d extracted/
+          else
+            mkdir -p extracted
+            mv *.js *.txt extracted/ 2>/dev/null || true
+          fi
+          
+          echo "Итоговое содержимое:"
+          find extracted -type f
+          
+          # Копируем bundle.js
+          BUNDLE=$(find extracted -name "bundle.js" | head -1)
+          if [ -z "$BUNDLE" ]; then
+            echo "❌ bundle.js не найден!"
+            exit 1
+          fi
+          
+          cp "$BUNDLE" /tmp/bundle.js
+          echo "✅ bundle.js готов:"
+          ls -lh /tmp/bundle.js
+          head -5 /tmp/bundle.js
+      
+      - name: 🔧 Setup Android SDK
+        run: |
           mkdir -p $HOME/android-sdk
           cd $HOME/android-sdk
           wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
@@ -52,238 +108,88 @@ jobs:
           export ANDROID_HOME=$HOME/android-sdk
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
           echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
           
           yes | sdkmanager --licenses >/dev/null 2>&1 || true
           sdkmanager "build-tools;33.0.0" "platforms;android-33" >/dev/null 2>&1
-          
-          # Apktool
-          cd /tmp
-          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
-          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar
-          chmod +x apktool
-          sudo mv apktool /usr/local/bin/
-          sudo mv apktool_2.9.3.jar /usr/local/bin/apktool.jar
-          
-          echo "✅ Зависимости установлены"
+          echo "$ANDROID_HOME/build-tools/33.0.0" >> $GITHUB_PATH
       
-      - name: ⬇️ Download bundle.js
+      - name: 🏗️ Build APK
         run: |
-          mkdir -p /tmp/bundle_src
+          WORK="/tmp/apk"
+          mkdir -p $WORK/lib/{arm64-v8a,armeabi-v7a} $WORK/assets/genebrawl
           
-          if [ -n "${{ inputs.bundle_url }}" ]; then
-            echo "⬇️ Скачивание с URL: ${{ inputs.bundle_url }}"
-            wget -q "${{ inputs.bundle_url }}" -O /tmp/bundle_src/bundle.zip
-          else
-            echo "📦 Используем артефакт из предыдущего запуска..."
-            # Попробуем скачать последний успешный артефакт
-            curl -s "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=10" \
-              | grep -o '"archive_download_url": "[^"]*"' \
-              | head -1 \
-              | cut -d'"' -f4 > /tmp/artifact_url.txt
-            
-            if [ -s /tmp/artifact_url.txt ]; then
-              ARTIFACT_URL=$(cat /tmp/artifact_url.txt)
-              echo "Найден артефакт: $ARTIFACT_URL"
-              # Нужен токен для скачивания
-              curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -o /tmp/bundle_src/bundle.zip "$ARTIFACT_URL" 2>/dev/null || \
-                echo "⚠️ Не удалось скачать артефакт, создадим dummy"
-            else
-              echo "⚠️ Артефакты не найдены"
-            fi
-          fi
+          FRIDA="${{ inputs.frida_version }}"
+          echo "⬇️ Frida Gadget $FRIDA..."
           
-          # Распаковываем если есть
-          if [ -f "/tmp/bundle_src/bundle.zip" ]; then
-            cd /tmp/bundle_src
-            unzip -q bundle.zip 2>/dev/null || true
-            find . -name "bundle.js" -exec cp {} /tmp/bundle.js \;
-          fi
+          wget -q "https://github.com/frida/frida/releases/download/$FRIDA/frida-gadget-$FRIDA-android-arm64.so" -O $WORK/lib/arm64-v8a/libfrida-gadget.so
+          wget -q "https://github.com/frida/frida/releases/download/$FRIDA/frida-gadget-$FRIDA-android-arm.so" -O $WORK/lib/armeabi-v7a/libfrida-gadget.so
           
-          # Если не нашли bundle.js, создаём placeholder
-          if [ ! -f "/tmp/bundle.js" ]; then
-            echo '// Placeholder - замени на настоящий bundle.js' > /tmp/bundle.js
-            echo "⚠️ Используется placeholder! Замени bundle.js перед использованием."
-          fi
+          # Конфиг
+          echo '{"interaction":{"type":"script","path":"/data/local/tmp/genebrawl.js","on_change":"reload"}}' | tee $WORK/lib/arm64-v8a/libfrida-gadget.config.so | tee $WORK/lib/armeabi-v7a/libfrida-gadget.config.so > /dev/null
           
-          ls -lh /tmp/bundle.js
-      
-      - name: 🏗️ Build APK structure
-        run: |
-          WORK_DIR="/tmp/gene_apk"
-          mkdir -p $WORK_DIR/{lib/arm64-v8a,lib/armeabi-v7a,assets/genebrawl,META-INF}
-          
-          # Скачиваем Frida Gadget
-          FRIDA_VER="${{ inputs.frida_version }}"
-          echo "⬇️ Скачивание Frida Gadget $FRIDA_VER..."
-          
-          wget -q "https://github.com/frida/frida/releases/download/$FRIDA_VER/frida-gadget-$FRIDA_VER-android-arm64.so" \
-            -O $WORK_DIR/lib/arm64-v8a/libfrida-gadget.so
-          wget -q "https://github.com/frida/frida/releases/download/$FRIDA_VER/frida-gadget-$FRIDA_VER-android-arm.so" \
-            -O $WORK_DIR/lib/armeabi-v7a/libfrida-gadget.so
-          
-          # Копируем bundle.js
-          cp /tmp/bundle.js $WORK_DIR/assets/genebrawl/bundle.js
-          cp /tmp/bundle.js /tmp/genebrawl.js
-          
-          # Создаём конфиг для Gadget
-          if [ "${{ inputs.gadget_interaction }}" == "script" ]; then
-            CONFIG='{"interaction":{"type":"script","path":"/data/local/tmp/genebrawl.js","on_change":"reload"}}'
-          else
-            CONFIG='{"interaction":{"type":"listen","address":"127.0.0.1","port":27042}}'
-          fi
-          
-          echo "$CONFIG" | tee $WORK_DIR/lib/arm64-v8a/libfrida-gadget.config.so \
-            | tee $WORK_DIR/lib/armeabi-v7a/libfrida-gadget.config.so > /dev/null
-          
-          # AndroidManifest.xml
-          cat > $WORK_DIR/AndroidManifest.xml << 'EOF'
+          # Manifest
+          cat > $WORK/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-              package="com.genebrawl.mod"
-              android:versionCode="1"
-              android:versionName="1.0">
-              <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33"/>
-              <application 
-                  android:label="Gene Brawl Mod"
-                  android:hasCode="false"
-                  android:extractNativeLibs="true">
-                  <activity 
-                      android:name="android.app.NativeActivity"
-                      android:exported="true"
-                      android:configChanges="orientation|screenSize|smallestScreenSize">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-                      <meta-data android:name="android.app.lib_name" android:value="frida-gadget"/>
-                  </activity>
-              </application>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.genebrawl.mod" android:versionCode="1" android:versionName="1.0">
+            <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33"/>
+            <application android:label="Gene Brawl Mod" android:hasCode="false" android:extractNativeLibs="true">
+              <activity android:name="android.app.NativeActivity" android:exported="true" android:configChanges="orientation|screenSize|smallestScreenSize">
+                <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+                <meta-data android:name="android.app.lib_name" android:value="frida-gadget"/>
+              </activity>
+            </application>
           </manifest>
           EOF
           
-          echo "✅ Структура APK готова"
-          find $WORK_DIR -type f | head -10
-      
-      - name: 📦 Pack & Sign APK
-        run: |
-          WORK_DIR="/tmp/gene_apk"
-          cd $WORK_DIR
+          # Копируем bundle
+          cp /tmp/bundle.js $WORK/assets/genebrawl/
+          cp /tmp/bundle.js /tmp/genebrawl.js
           
-          # Создаём APK (ZIP)
-          zip -r /tmp/gene-brawl-unsigned.apk . -x ".*"
+          # Собираем APK
+          cd $WORK
+          zip -r /tmp/unsigned.apk . -x ".*"
           
-          # Генерируем ключ
-          keytool -genkey -v \
-            -keystore /tmp/debug.keystore \
-            -alias androiddebugkey \
-            -storepass android \
-            -keypass android \
-            -keyalg RSA \
-            -validity 10000 \
-            -dname "CN=Android Debug,O=Android,C=US" 2>&1 | tail -3
+          # Подпись
+          keytool -genkey -v -keystore /tmp/debug.keystore -alias androiddebugkey -storepass android -keypass android -keyalg RSA -validity 10000 -dname "CN=Android Debug,O=Android,C=US" 2>&1 | tail -2
+          apksigner sign --ks /tmp/debug.keystore --ks-pass pass:android --key-pass pass:android --out /tmp/gene-brawl-mod.apk /tmp/unsigned.apk
           
-          # Подписываем
-          $ANDROID_HOME/build-tools/33.0.0/apksigner sign \
-            --ks /tmp/debug.keystore \
-            --ks-pass pass:android \
-            --key-pass pass:android \
-            --out /tmp/gene-brawl-mod.apk \
-            /tmp/gene-brawl-unsigned.apk
-          
-          # Проверяем
-          $ANDROID_HOME/build-tools/33.0.0/apksigner verify /tmp/gene-brawl-mod.apk
-          
-          echo "✅ APK подписан"
+          echo "✅ APK собран:"
           ls -lh /tmp/gene-brawl-mod.apk
       
-      - name: 📋 Create Release Package
+      - name: 📦 Package & Upload
         run: |
-          OUTPUT_DIR="/tmp/output"
-          mkdir -p $OUTPUT_DIR/gene-brawl-apk
+          mkdir -p /tmp/final/gene-brawl-apk
+          cp /tmp/gene-brawl-mod.apk /tmp/final/gene-brawl-apk/
+          cp /tmp/bundle.js /tmp/final/gene-brawl-apk/
+          cp /tmp/genebrawl.js /tmp/final/gene-brawl-apk/push_to_device.js
           
-          # Копируем файлы
-          cp /tmp/gene-brawl-mod.apk $OUTPUT_DIR/gene-brawl-apk/
-          cp /tmp/bundle.js $OUTPUT_DIR/gene-brawl-apk/bundle.js
-          cp /tmp/genebrawl.js $OUTPUT_DIR/gene-brawl-apk/genebrawl.js
+          cat > /tmp/final/gene-brawl-apk/README.txt << 'EOF'
+          ╔════════════════════════════════════════════════╗
+          ║     GENE BRAWL MOD - ГОТОВЫЙ APK               ║
+          ╚════════════════════════════════════════════════╝
           
-          # Создаём инструкцию
-          cat > $OUTPUT_DIR/gene-brawl-apk/README.txt << EOF
-          ╔══════════════════════════════════════════════════════════════╗
-          ║              GENE BRAWL MOD - ГОТОВЫЙ APK                    ║
-          ╚══════════════════════════════════════════════════════════════╝
+          ⚠️ ТРЕБУЕТСЯ ROOT!
           
-          📁 ФАЙЛЫ:
-          ├── gene-brawl-mod.apk    ← Установи на Android (требуется ROOT!)
-          ├── bundle.js             ← Исходный скрипт
-          └── genebrawl.js          ← Для /data/local/tmp/
-          
-          ═══════════════════════════════════════════════════════════════
-          📱 УСТАНОВКА (Требуется ROOT!)
-          ═══════════════════════════════════════════════════════════════
-          
-          1. Установи APK:
-             adb install gene-brawl-mod.apk
-          
-          2. Положи скрипт в систему:
-             adb push genebrawl.js /data/local/tmp/genebrawl.js
-             adb shell chmod 644 /data/local/tmp/genebrawl.js
-          
+          1. adb install gene-brawl-mod.apk
+          2. adb push push_to_device.js /data/local/tmp/genebrawl.js
           3. Запусти "Gene Brawl Mod" на телефоне
+          4. Запусти игру
           
-          4. Запусти игру Gene Brawl (отдельно)
-          
-          ═══════════════════════════════════════════════════════════════
-          🔧 РУЧНОЙ ЗАПУСК (через Frida)
-          ═══════════════════════════════════════════════════════════════
-          
-          Android:
-             frida -U Gadget -l bundle.js
-          
-          iOS:
-             frida -U -f com.supercell.laser -l bundle.js --no-pause
-          
-          ═══════════════════════════════════════════════════════════════
-          ⚠️ ВАЖНО
-          ═══════════════════════════════════════════════════════════════
-          
-          - Требуется ROOT (Magisk/KernelSU)
-          - Работает ТОЛЬКО с Gene Brawl
-          - Для обновления мода: adb push bundle.js /data/local/tmp/genebrawl.js
-          
-          Сборка: ${{ github.run_number }} | Frida: ${{ inputs.frida_version }}
+          Или вручную: frida -U Gadget -l bundle.js
           EOF
           
-          # Создаём ZIP
-          cd $OUTPUT_DIR
+          cd /tmp/final
           zip -r gene-brawl-apk.zip gene-brawl-apk/
-          
-          echo "✅ Пакет создан"
-          ls -lh gene-brawl-apk.zip
       
-      - name: 📤 Upload APK Artifact
+      - name: 📤 Upload
         uses: actions/upload-artifact@v4
         with:
-          name: gene-brawl-apk-${{ github.run_number }}
-          path: /tmp/output/gene-brawl-apk.zip
-          retention-days: 30
+          name: gene-brawl-apk-final
+          path: /tmp/final/gene-brawl-apk.zip
       
-      - name: 🎉 Summary
+      - name: 🎉 Done
         run: |
-          echo "=========================================="
-          echo "✅ APK УСПЕШНО СОБРАН!"
-          echo "=========================================="
-          echo ""
-          echo "📦 Скачать: Actions → этот запуск → Artifacts"
-          echo ""
-          echo "📱 Установка:"
-          echo "  1. Распакуй gene-brawl-apk.zip"
-          echo "  2. adb install gene-brawl-mod.apk"
-          echo "  3. adb push genebrawl.js /data/local/tmp/genebrawl.js"
-          echo "  4. Запусти 'Gene Brawl Mod' на телефоне"
-          echo ""
-          echo "🔧 Frida версия: ${{ inputs.frida_version }}"
-          echo "🔧 Режим: ${{ inputs.gadget_interaction }}"
-          echo "=========================================="
+          echo "✅ ГОТОВО!"
+          echo "Скачивай: gene-brawl-apk-final.zip"
+          echo "Там: APK + bundle.js + инструкция"
