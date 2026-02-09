@@ -1,4 +1,4 @@
-name: Build Gene Brawl APK
+name: Build Gene Brawl Frida Mod
 
 on:
   workflow_dispatch:
@@ -9,18 +9,18 @@ on:
         default: 'debug'
         type: choice
         options:
-          - debug
+          - debug (development)
           - production
-      base_apk_url:
-        description: 'URL базового APK Brawl Stars (прямая ссылка на скачивание)'
+      obfuscate:
+        description: 'Обфусцировать код? (только для production)'
         required: true
-        default: 'https://example.com/brawl-stars-base.apk'
-        type: string
-      apk_name:
-        description: 'Имя выходного файла'
+        default: true
+        type: boolean
+      compile_bytecode:
+        description: 'Компилировать в байткод? (compile_bytecode.py)'
         required: true
-        default: 'gene-brawl-mod'
-        type: string
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -41,215 +41,139 @@ jobs:
         with:
           python-version: '3.11'
       
-      - name: ⬇️ Install dependencies
+      - name: 📦 Install dependencies
         run: |
           echo "=========================================="
           echo "⬇️ Установка зависимостей..."
           echo "=========================================="
-          
-          # Node.js deps
           npm ci
+          echo "✅ Зависимости установлены"
           
-          # System tools
-          sudo apt-get update
-          sudo apt-get install -y wget unzip zip openjdk-17-jre-headless
-          
-          # Apktool
-          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
-          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar
-          chmod +x apktool
-          sudo mv apktool /usr/local/bin/
-          sudo mv apktool_2.9.3.jar /usr/local/bin/apktool.jar
-          
-          # uber-apk-signer
-          wget -q https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
-          sudo mv uber-apk-signer-1.3.0.jar /usr/local/bin/uber-apk-signer.jar
-          
-          # Android SDK for apksigner
-          cd /tmp
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip -q commandlinetools-linux-9477386_latest.zip
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          mv cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "build-tools;34.0.0" >/dev/null 2>&1
-          
-          echo "✅ Все инструменты установлены"
+          echo ""
+          echo "📋 Проверка структуры:"
+          ls -la
+          echo ""
+          echo "📄 Скрипты package.json:"
+          cat package.json | grep -A 15 '"scripts"'
       
-      - name: 🏗️ Build mod bundle
+      - name: 🏗️ Build bundle.js
         run: |
           echo "=========================================="
-          echo "🔨 Сборка мода..."
+          echo "🔨 Сборка Gene Brawl Mod..."
           echo "=========================================="
           
           if [ "${{ inputs.build_type }}" == "production" ]; then
+            echo "🚀 Режим: PRODUCTION (с оптимизацией)"
             npm run build
           else
+            echo "🚀 Режим: DEBUG (с source maps)"
             npm run build_dev
           fi
           
-          echo "✅ Мод собран:"
-          ls -lh dist/bundle.js
+          echo ""
+          echo "=========================================="
+          echo "📁 Результат сборки:"
+          echo "=========================================="
+          ls -lh dist/
+          
+          echo ""
+          echo "📊 Размер файлов:"
+          du -h dist/*
       
-      - name: 📱 Download & Decompile APK
+      - name: 🔒 Obfuscate check
+        if: inputs.build_type == 'production' && inputs.obfuscate == true
         run: |
           echo "=========================================="
-          echo "⬇️ Скачивание базового APK..."
+          echo "🔒 Проверка обфускации..."
           echo "=========================================="
           
-          mkdir -p base_apk
-          wget -q "${{ inputs.base_apk_url }}" -O base_apk/base.apk || {
-            echo "❌ Не удалось скачать APK!"
-            echo "Проверь что URL рабочий и доступен без авторизации"
-            exit 1
-          }
+          # Проверяем что обфускатор отработал
+          if grep -q "var _0x" dist/bundle.js 2>/dev/null; then
+            echo "✅ Обфускация применена (найдены _0x переменные)"
+          else
+            echo "⚠️ Обфускация может быть отключена в obfuscator.json"
+          fi
           
-          echo "✅ APK скачан:"
-          ls -lh base_apk/base.apk
-          
+          # Показываем первые 20 строк для проверки
           echo ""
-          echo "=========================================="
-          echo "📦 Декомпиляция APK..."
-          echo "=========================================="
-          
-          apktool d base_apk/base.apk -o decoded_apk -f
-          
-          echo "✅ APK декомпилирован"
-          echo "📁 Структура:"
-          find decoded_apk -maxdepth 2 -type d | head -20
+          echo "🔍 Первые 20 строк bundle.js:"
+          head -20 dist/bundle.js
       
-      - name: 🔧 Inject mod into APK
+      - name: ⚡ Compile to Bytecode (optional)
+        if: inputs.compile_bytecode == true
         run: |
           echo "=========================================="
-          echo "🔧 Встраивание мода в APK..."
+          echo "⚡ Компиляция в байткод..."
           echo "=========================================="
           
-          # Gene Brawl мод для Frida - нужно встроить frida-gadget или заменить libg.so
-          # Вариант 1: Если мод заменяет libg.so (старая версия)
-          # Вариант 2: Если мод встраивает frida-gadget (новая версия)
-          
-          echo "📋 Поиск libg.so..."
-          find decoded_apk -name "libg.so" -o -name "libg.*.so" 2>/dev/null
-          
-          echo ""
-          echo "📋 Поиск assets..."
-          ls -la decoded_apk/assets/ 2>/dev/null || echo "assets/ не найден"
-          
-          echo ""
-          echo "📋 Поиск smali (код приложения)..."
-          ls decoded_apk/smali*/ 2>/dev/null | head -10
-          
-          # Создаём папку для мода в assets
-          mkdir -p decoded_apk/assets/genebrawl
-          
-          # Копируем bundle.js как скрипт для Frida
-          cp dist/bundle.js decoded_apk/assets/genebrawl/mod.js
-          
-          # Создаём конфиг для Frida Gadget
-          cat > decoded_apk/assets/genebrawl/gadget.config << 'EOF'
-          {
-            "interaction": {
-              "type": "script",
-              "path": "/assets/genebrawl/mod.js"
-            }
-          }
-EOF
-          
-          echo "✅ Мод встроен в assets/genebrawl/"
-          
-          # Если есть libg.so - делаем бэкап и замену (зависит от версии мода)
-          if [ -f "decoded_apk/lib/arm64-v8a/libg.so" ]; then
+          # Проверяем что compile_bytecode.py существует
+          if [ -f "tools/compile_bytecode.py" ]; then
+            python3 tools/compile_bytecode.py dist/bundle.js
+            echo "✅ Байткод создан"
+            
             echo ""
-            echo "🔧 Обнаружен libg.so - применяем патч..."
-            # Здесь может быть логика замены libg.so на пропатченную версию
-            # или встраивание frida-gadget
-            cp decoded_apk/lib/arm64-v8a/libg.so decoded_apk/lib/arm64-v8a/libg.so.backup
-            echo "✅ libg.so сохранён"
+            echo "📁 Файлы после компиляции:"
+            ls -lh dist/
+          else
+            echo "❌ tools/compile_bytecode.py не найден!"
+            exit 1
           fi
       
-      - name: 📦 Recompile & Sign APK
+      - name: 📋 Generate info file
         run: |
           echo "=========================================="
-          echo "📦 Пересборка APK..."
+          echo "📝 Создание info.txt..."
           echo "=========================================="
           
-          # Пересобираем APK
-          apktool b decoded_apk -o unsigned.apk
+          cat > dist/info.txt << EOF
+          Gene Brawl Mod Build Info
+          ===========================
+          Build Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          Build Type: ${{ inputs.build_type }}
+          Version: $(node -p "require('./package.json').version")
+          Git Commit: ${{ github.sha }}
+          Git Branch: ${{ github.ref_name }}
           
-          echo "✅ APK пересобран"
+          Files:
+          $(ls -lh dist/ | tail -n +2)
           
-          echo ""
-          echo "=========================================="
-          echo "🔏 Подпись APK..."
-          echo "=========================================="
-          
-          # Подписываем APK
-          java -jar /usr/local/bin/uber-apk-signer.jar \
-            -a unsigned.apk \
-            --out signed/ \
-            --ks gene.keystore \
-            --ksAlias gene \
-            --ksPass gene123 \
-            --ksKeyPass gene123 \
-            --createKeyStore true
-          
-          # Переименовываем финальный файл
-          mkdir -p output
-          cp signed/unsigned-aligned-debugSigned.apk "output/${{ inputs.apk_name }}.apk" 2>/dev/null || \
-          cp signed/*-debugSigned.apk "output/${{ inputs.apk_name }}.apk" 2>/dev/null || \
-          cp signed/*.apk "output/${{ inputs.apk_name }}.apk"
-          
-          echo "✅ APK подписан:"
-          ls -lh output/
-      
-      - name: 📝 Generate info
-        run: |
-          cat > output/README.txt << EOF
-          Gene Brawl Mod APK
-          ==================
-          
-          Файл: ${{ inputs.apk_name }}.apk
-          Версия: $(node -p "require('./package.json').version")
-          Тип сборки: ${{ inputs.build_type }}
-          Дата: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          
-          Установка:
-          1. Удали оригинальный Brawl Stars
-          2. Установи этот APK
-          3. Запусти игру - мод активируется автоматически
-          
-          Важно:
-          - Это модифицированный APK с встроенным Gene Brawl
-          - Не работает с официальным сервером (только приватные сервера)
-          - Используй на свой страх и риск
-          
-          Собрано автоматически через GitHub Actions
+          Usage:
+          - DEBUG: frida -U Gadget -l dist/bundle.js
+          - iOS: frida -U -f com.supercell.laser -l dist/bundle.js
+          - Mac: frida -f /Applications/gene.brawl.dev.app/laser -l dist/bundle.js
           EOF
           
-          cat output/README.txt
+          cat dist/info.txt
       
-      - name: 📤 Upload APK
+      - name: 📤 Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.apk_name }}-${{ inputs.build_type }}
+          name: gene-brawl-${{ inputs.build_type }}-${{ github.run_number }}
           path: |
-            output/${{ inputs.apk_name }}.apk
-            output/README.txt
+            dist/
+            !dist/*.map
           if-no-files-found: error
           retention-days: 30
       
-      - name: 🎉 Done
+      - name: 🎉 Success
         run: |
           echo "=========================================="
-          echo "✅ ГОТОВО!"
+          echo "✅ СБОРКА УСПЕШНО ЗАВЕРШЕНА!"
           echo "=========================================="
-          echo "📦 Скачай APK из артефактов:"
-          echo "   Actions → Этот запуск → Artifacts"
+          echo "📦 Артефакты: gene-brawl-${{ inputs.build_type }}-${{ github.run_number }}"
           echo ""
-          echo "📱 Установка:"
-          echo "   1. Скачай ${{ inputs.apk_name }}.apk"
-          echo "   2. Передай на телефон"
-          echo "   3. Установи (разреши неизвестные источники)"
+          echo "🔧 Как использовать:"
+          echo "  1. Скачай артефакт из Actions"
+          echo "  2. Распакуй dist/ папку"
+          echo "  3. Запусти Frida с bundle.js:"
+          echo ""
+          
+          if [ "${{ inputs.build_type }}" == "debug" ]; then
+            echo "     frida -U Gadget -l dist/bundle.js"
+          else
+            echo "     frida -U -f com.supercell.laser -l dist/bundle.js --no-pause"
+          fi
+          
+          echo ""
+          echo "💡 Для iOS: убедись что bundle ID com.supercell.laser"
           echo "=========================================="
